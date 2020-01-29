@@ -18,6 +18,10 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
+typedef struct {
+  long double x, y, z;
+} Point;
+
 /* flags used to control the appearance of the image */
 int g_lineDrawing = 0;  // draw polygons as solid or lines
 int g_lighting = 1;     // use diffuse and specular lighting
@@ -37,10 +41,10 @@ int g_image[100][100];
 void init(void) {
   GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};
   GLfloat light_diffuse[] = {0.7, 0.7, 0.7, 1.0};
-  GLfloat light_specular[] = {0.7, 0.7, 0.7, 1.0};
+  // GLfloat light_specular[] = {0.7, 0.7, 0.7, 1.0};
   GLfloat light_ambient1[] = {0.2, 0.2, 0.2, 1.0};
   GLfloat light_diffuse1[] = {0.4, 0.4, 0.4, 1.0};
-  GLfloat light_specular1[] = {0.9, 0.9, 0.9, 1.0};
+  // GLfloat light_specular1[] = {0.9, 0.9, 0.9, 1.0};
   GLfloat light_full_off[] = {0.0, 0.0, 0.0, 1.0};
   GLfloat light_full_on[] = {1.0, 1.0, 1.0, 1.0};
 
@@ -75,10 +79,10 @@ void init(void) {
 }
 
 void display(void) {
-  GLfloat blue[] = {0.0, 0.0, 1.0, 1.0};
+  //   GLfloat blue[] = {0.0, 0.0, 1.0, 1.0};
   GLfloat red[] = {1.0, 0.0, 0.0, 1.0};
   GLfloat darkred[] = {0.3, 0.0, 0.0, 1.0};
-  GLfloat green[] = {0.0, 1.0, 0.0, 1.0};
+  //   GLfloat green[] = {0.0, 1.0, 0.0, 1.0};
   GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
   GLfloat gray[] = {0.8, 0.8, 0.8, 1.0};
   GLfloat darkgray[] = {0.3, 0.3, 0.3, 1.0};
