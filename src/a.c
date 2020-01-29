@@ -19,19 +19,19 @@
 #include <OpenGL/glu.h>
 
 /* flags used to control the appearance of the image */
-int lineDrawing = 0;  // draw polygons as solid or lines
-int lighting = 1;     // use diffuse and specular lighting
-int drawNormals = 0;  // draw normals on object
-int heightmap = 0;    // use heightmap to move vertices when == 1
-int drawDots = 0;     // draw only vertices when == 1
-int smoothShade = 1;  // use normal vertices when ==1,surface normals when ==0
+int g_lineDrawing = 0;  // draw polygons as solid or lines
+int g_lighting = 1;     // use diffuse and specular lighting
+int g_drawNormals = 0;  // draw normals on object
+int g_heightmap = 0;    // use heightmap to move vertices when == 1
+int g_drawDots = 0;     // draw only vertices when == 1
+int g_smoothShade = 1;  // use normal vertices when ==1,surface normals when ==0
 
 /* used to rotate object in update() */
-float rot = 0.0;
+float g_rotate = 0.0;
 
 /* used for height map */
-int iheight, iwidth, idepth;
-int image[100][100];
+int g_iHeight, g_iWidth, g_iDepth;
+int g_image[100][100];
 
 /*  Initialize material property and light source.  */
 void init(void) {
@@ -49,7 +49,7 @@ void init(void) {
 
   /* if lighting is turned on then use ambient, diffuse and specular
      lights, otherwise use ambient lighting only */
-  if (lighting == 1) {
+  if (g_lighting == 1) {
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_full_on);
@@ -90,7 +90,7 @@ void display(void) {
   glShadeModel(GL_SMOOTH);
 
   /* draw polygons as either solid or outlines */
-  if (lineDrawing == 1)
+  if (g_lineDrawing == 1)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   else
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -103,7 +103,7 @@ void display(void) {
   glTranslatef(0.0, 0.0, -7.0);
   /* rotate around the y axis, angle or rotation (rot) modified in
      the update() function */
-  glRotatef(rot, 0.0, 1.0, 0.0);
+  glRotatef(g_rotate, 0.0, 1.0, 0.0);
 
   /* set polygon colour */
   glMaterialfv(GL_FRONT, GL_AMBIENT, darkgray);
@@ -144,52 +144,52 @@ void keyboard(unsigned char key, int x, int y) {
       exit(0);
       break;
     case '1':  // draw polygons as outlines
-      lineDrawing = 1;
-      lighting = 0;
+      g_lineDrawing = 1;
+      g_lighting = 0;
       init();
       display();
       break;
     case '2':  // draw polygons as filled but not shaded (ambient only)
-      lineDrawing = 0;
-      lighting = 0;
+      g_lineDrawing = 0;
+      g_lighting = 0;
       init();
       display();
       break;
     case '3':  // diffuse and specular lighting, smooth shading
-      lineDrawing = 0;
-      lighting = 1;
+      g_lineDrawing = 0;
+      g_lighting = 1;
       init();
       display();
       break;
     case '4':  // draw vertices only, no polygons when ==1
-      if (drawDots == 0)
-        drawDots = 1;
+      if (g_drawDots == 0)
+        g_drawDots = 1;
       else
-        drawDots = 0;
+        g_drawDots = 0;
       break;
     case '5':  // flat shade, use only one normal
-      if (smoothShade == 0)
-        smoothShade = 1;
+      if (g_smoothShade == 0)
+        g_smoothShade = 1;
       else
-        smoothShade = 0;
+        g_smoothShade = 0;
       break;
     case '6':  // draw normals to points when ==1
-      if (drawNormals == 0)
-        drawNormals = 1;
+      if (g_drawNormals == 0)
+        g_drawNormals = 1;
       else
-        drawNormals = 0;
+        g_drawNormals = 0;
       break;
     case '7':  // add height map to sphere when ==1
-      if (heightmap == 0)
-        heightmap = 1;
+      if (g_heightmap == 0)
+        g_heightmap = 1;
       else
-        heightmap = 0;
+        g_heightmap = 0;
       break;
   }
 }
 
 void update() {
-  rot += 1.0;
+  g_rotate += 1.0;
   display();
 }
 
