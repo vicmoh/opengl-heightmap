@@ -1,6 +1,3 @@
-
-all: a
-
 # framework information for older version of MACOS
 #INCLUDES = -F/System/Library/Frameworks -framework OpenGL -framework GLUT -lm
 
@@ -9,7 +6,16 @@ INCLUDES = -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platfor
 
 TARGET = -mmacosx-version-min=10.8
 
-a: a.c
-	clang a.c -o a $(INCLUDES) $(TARGET)
+m = [AUTO]
 
+run: compile
+	./bin/run
+
+compile:
+	gcc -Wall -pedantic ./src/*.c -o ./bin/run $(INCLUDES) $(TARGET)
+
+git:
+	git add -A
+	git commit -m '$(m)'
+	git push
 
