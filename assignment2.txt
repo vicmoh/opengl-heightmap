@@ -1,0 +1,258 @@
+. CIS*4800 - Assignment 2 - Procedural Objects and Height Maps
+. -----------------------------------------------------------
+. Due: Friday, February 7, 2020
+. 
+. Modify the starting code for assignment 2 to create procedurally generated
+. sphere. Add options to flat shade the sphere, display normals, add a height
+. map to the sphere, and display the vertices on the sphere.
+. 
+. There is a comment in the starting a.c file that indicates where to
+. put your OpenGL code. The code to read in the input file
+. will need to be called from the main() or a function in main().
+. 
+. 
+. 
+. Procedural Sphere Creation
+. --------------------------
+. Use the parametric equation for a sphere to calculate the vertices for
+. a 3D model of a sphere. 
+. 
+. The parametric equation for a sphere is:
+. 
+. x = r cos(v) cos(u)
+. y = r cos(v) sin(u)
+. z = r sin(v)
+. 
+. where r is the radius of the sphere and the range of values for
+. the parameters u and v are:
+. 
+. u = [0, 2PI]
+. v = [-PI/2, PI/2]
+. 
+. You will need two nested for loops to traverse the two parameters (u and v)
+. to find all of the points on the sphere.
+. 
+. Divide the ranges of both parameters into equal parts (equal step sizes)
+. and have each loop step through one parameter. For example, if you want
+. ten segments horizontally and vertically on the sphere use something like this:
+. 	for(i=0; i<10; i++) {
+. 	   for(j=0; j<10; j++) {
+.                u = starting u value + (i * stepsizeu);
+.                v = starting v value + (j * stepsizev);
+.                x1 = ...
+.                y1 = ...
+.                z1 = ...
+.                ...
+.            }
+.         }
+. This will calculate the vertices. One vertex per iteration of the loops.
+. 
+. It is easiest if you set the radius r equal to 1.0. This will display
+. correctly when you draw them on the screen. 
+. 
+. Use glBegin(GL_POINTS) and glVertex3f() to draw the points.
+. 
+. A good place to begin is to see if your parametric equation is working
+. correctly is to draw the vertices. If this works correctly then you
+. can move onto the later steps.
+. 
+. Do not use any of the built in functions to create a sphere for any of the
+. parts of this assignment.
+. 
+. Calculating Normals
+. -------------------
+. You will also need to calculate the normals for each vertex.
+. The normals can be calculated by creating a vector from the
+. centre of the sphere to a vertex. If the sphere has a radius
+. of 1.0 then the normal will already be one unit long so you wont
+. need to normalize it (divide by the length of the normal in order
+. to make it one unit long). In this case the vertex is the same
+. as the normal.  If your sphere is larger than one unit
+. in radius then you will need to divide each vertex (x,y,z)
+. by the radius to make the normal one unit in size.
+. 
+. 
+. Draw Vertices
+. -------------
+. Once you have the vertices drawing correctly you should add a keyboard()
+. routine to toggle them on and off. The code is included in the starting
+. code to toggle drawing vertices using the 4 key.
+. 
+. The flag drawDots is set equal to 1 to when the vertices should be drawn.
+. It is set equal to 0 when the polygons should be drawn.
+. 
+. 
+. Draw Shaded Polygons
+. ----------------------
+. The next step is to create polygons by joining four vertices.
+. For each vertex you calculated previously you will need to calculate
+. three more vertices to create the quadrilateral polygon.
+. In the for loop that was used to calculate (x1,y1,z1) you
+. will need to perform the calculations with offsets in the u and v
+. parameters. For example:
+.    x1 = r cos(v) cos(u)
+.    y1 = r cos(v) sin(u)
+.    z1 = r sin(v)
+.    x2 = r cos(v) cos(u + offsetu)
+.    y2 = r cos(v) sin(u + offsetu)
+.    z2 = r sin(v)
+.    x3 = r cos(v + offsetv) cos(u + offsetu)
+.    y3 = r cos(v + offsetv) sin(u + offsetu)
+.    z3 = r sin(v + offsetv)
+.    x4 = r cos(v + offsetv) cos(u)
+.    y4 = r cos(v + offsetv) sin(u)
+.    z4 = r sin(v + offsetv)
+. 
+. It is probably easier to count the number of steps in each direction (for
+. example each loop counts from 0 to 9 if you want 10 segments in u and v).
+. If you then calculate the starting u and v values, and add i or j times
+. the step size to determine the value in the equation. For example, the
+. first equation might look something like this:
+. 	x = radius * cosf(j * stepv + startv) * cosf(i * stepu);
+. There is no startu because the starting value (minimum) for u is zero
+. and we would just be adding 0.0 to the u part of above equation..
+. Don't forget that the values for v start at -PI/2 and not zero.
+. 
+. Once you have the four points for a polygon determined you can tell
+. OpenGL to draw the polygon using glBegin(GL_QUADS) and you can
+. pass each vertex using glVertex3f(). Note that before each call
+. to glVertex3f() you should first call glNormal3f() and pass the
+. normal information for that vertex. Do not pass the normal after
+. the vertex points (glNormal3f() must be called before each glVertex3f()).
+. 
+. This should be the default mode that the program runs in when it starts.
+. You should see a smoothly shaded sphere with ambient, diffuse, and specular
+. lighting. When key 1 is pressed the outline of the polygons should be visible.
+. When key 2 is pressed only the ambient light is turned on and the sphere
+. should be solid but not appear curved (not smooth shaded). When the 3 key
+. is pressed the smooth shaded sphere should be drawn. These are the default
+. keyboard commands that are built into the program. You should also have
+. implemented key 4 which toggles between drawing the polygons (GL_QUADS)
+. and the vertices (GL_POINTS). 
+. 
+. The sphere should be gray. There are default gray and dark
+. gray colours setup in the starting code so you do not need to set the colour.
+. 
+. 
+. Flat Shading
+. ------------
+. Flat shading (constant shading) can be implemented by using the same
+. normal for all vertices on a polygon. When all of the normals on
+. are the same it is telling the graphics system that the surface is
+. flat. If the normals point in different directions then the surface will
+. appear smooth or curved when rendered. In this case, if all four
+. vertices are given the same normal then the polygon will appear flat.
+. You can do this by calling glNormal3f() once and then calling
+. glVertex3f() four times (one for each vertex).
+. 
+. This option should toggle on and off with key 5. The variable
+. smoothShade is set equal to 1 when four normals should be used and
+. it is set equal to 0 when only one normal should be used.
+. 
+. Do not use the build in flat shading option in OpenGL. 
+. Don't change the shading model from GL_SMOOTH.
+. 
+. 
+. Displaying Normals
+. ------------------
+. You should have the normals calculated for each vertex. You can draw them
+. by starting at each vertex (x,y,z) and drawing the normal vector from
+. that point. 
+. 
+. Don't draw the normals as one unit long. This will look confusing
+. given the sphere has a radius of one. Make the normals 0.1 unit long.
+. Since the normals are 1.0 unit long this can be done by dividing by 10.
+. You can draw the lines for the normals using GL_LINES. Make the
+. normals green. After each normal has been drawn the colour should be
+. reset to darkgray and gray for GL_AMBIENT and GL_DIFFUSE respectively. 
+. 
+. Key 6 is used to toggle drawing the normals. It controls the variable
+. drawNormals which is set to 1 when the normals should be drawn
+. and 0 when the normals should not be drawn.
+. 
+. 
+. Height Maps
+. -----------
+. The heightmap takes the values in an image and uses them to move
+. the (x,y,z) coordinates for each vertex. 
+. 
+. Each sample image is 50x50 pixels so it is easiest to draw your
+. sphere with 50x50 vertices (u and v segments) so one pixel can
+. be associated with one vertex.
+. 
+. If a pixel in the image is black is has a value of 0. This means
+. the vertex will be moved 0 (not at all).  If the pixel is white
+. it will have a value of 255 and this will move the vertex the farthest.
+. Gray values that appear between 0 and 255 will move the vertex proportionally
+. to the size of the value.
+. 
+. You can experiment with different parameters to see how much effect
+. you want the height map to have on the sphere. If the sphere is
+. distorted too much by the height map it will become hard to view.
+. The sample images were created using:
+. 	x *= 1.0 + image[i][j] / 512.0;
+. In this case, the x coordinate is multiplied by the image height
+. divided by 512. Since the maximum image value is 255 the pixel
+. value will be scaled to be between 0.0 and 0.5. The 1.0 is added to maintain
+. the original sphere size. If this isn't done then all points will be scaled
+. to between 0.0 and 0.5 and the sphere will become too small. 
+. 
+. If you move the vertices then you will need to recalculate the normals
+. because they will no longer be one unit long. 
+. 
+. Key 7 toggles between drawing the sphere and the height map on the sphere.
+. The variable is set to 1 when the heightmap is drawn and 0 when the
+. sphere is drawn.
+. 
+. 
+. Reading the Heightmap
+. ---------------------
+. Read an image file and use it to create the height map.
+. 
+. Height maps are used to represent complex surfaces. 
+. Read the height map from a pgm file and store it in a two dimensional array.
+. A zero in the array indicates the no change in height and the
+. largest value in the image (depth) indicates the maximum height of the model.
+. 
+. The pgm files we are using is monochrome so it will have one value per pixel.
+. The pgm files have the format:
+. 
+. P2
+. width height depth
+. numbers ...
+. 
+. The P2 is a header which indicates a gray scale ASCII file.
+. The height and width are the dimensions of the image. The depth is the
+. maximum value of any of the numbers.  The numbers are the image information.
+. Any type and amount of whitespace can appear between any of the
+. fields in the file. Comments can appear on any line starting with a #.
+. 
+. Read the name of the input file from the command line. The program should work as follows:
+. 	a <filename>
+. where <filename> is the .pgm file name.
+. 
+. Three sample input files are provided on the Courselink page.
+. 
+. 
+. Handin Notes
+. ------------
+. 
+. Submit the assignment using the dropbox for assignment 2 on Courselink.
+. 
+. Include a readme.txt which contains your student number, and a short description
+. of any parts of the program which do not function correctly.
+. 
+. The program will be tested with sample input files.
+. 
+. Your code must run on the Macs in Thorn. 2420.
+. 
+. Submit your source files necessary to compile your code, a makefile that
+. will compile the code, and any other file necessary to build and run
+. the project.  The assignment will be compiled following these steps by:
+.         -unpacking your submission (tar or zip)
+.         -typing make
+. 	-running a <filename> from the command line
+. Any executables in the directory will be removed before make is run.
+ 
+ 
+ 
