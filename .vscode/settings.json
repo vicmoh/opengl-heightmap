@@ -2,5 +2,9 @@
     "files.associations": {
         "stdlib.h": "c",
         "bit": "c"
-    }
+    },
+    "cSpell.ignoreWords": [
+        "g",
+        "lfloat"
+    ]
 }

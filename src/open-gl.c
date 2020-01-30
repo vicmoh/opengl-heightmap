@@ -2,6 +2,7 @@
 /* Derived from scene.c in the The OpenGL Programming Guide */
 
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +23,14 @@ typedef struct {
   long double x, y, z, xz;
 } Point;
 
+GLfloat BLUE[] = {0.0, 0.0, 1.0, 1.0};
+GLfloat RED[] = {1.0, 0.0, 0.0, 1.0};
+GLfloat DARK_RED[] = {0.3, 0.0, 0.0, 1.0};
+GLfloat GREEN[] = {0.0, 1.0, 0.0, 1.0};
+GLfloat WHITE[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat GRAY[] = {0.8, 0.8, 0.8, 1.0};
+GLfloat DARK_GRAY[] = {0.3, 0.3, 0.3, 1.0};
+
 /* flags used to control the appearance of the image */
 int g_lineDrawing = 0;  // draw polygons as solid or lines
 int g_lighting = 1;     // use diffuse and specular lighting
@@ -37,7 +46,75 @@ float g_rotate = 0.0;
 int g_iHeight, g_iWidth, g_iDepth;
 int g_image[100][100];
 
-void createSphere() {
+void drawTest() {
+  glBegin(GL_POINT);
+  glPointSize(60);
+  glVertex3f(100, 100, 0);
+  glEnd();
+}
+
+void drawSphere(double r, int lats, int longs) {
+  const bool SHOW_PRINT = false;
+  const char debug[] = "drawSphere(): ";
+  if (SHOW_PRINT) printf("%sDrawing sphere...\n", debug);
+  for (int i = 0; i <= lats; i++) {
+    double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
+    double z0 = sin(lat0);
+    double zr0 = cos(lat0);
+
+    double lat1 = M_PI * (-0.5 + (double)i / lats);
+    double z1 = sin(lat1);
+    double zr1 = cos(lat1);
+
+    glBegin(GL_QUAD_STRIP);
+    for (int j = 0; j <= longs; j++) {
+      double lng = 2 * M_PI * (double)(j - 1) / longs;
+      double x = cos(lng);
+      double y = sin(lng);
+      // Draw normal and vertex
+      glNormal3f(x * zr0, y * zr0, z0);
+      glVertex3f(r * x * zr0, r * y * zr0, r * z0);
+
+      // Draw the vertex and vertex
+      glNormal3f(x * zr1, y * zr1, z1);
+      glVertex3f(r * x * zr1, r * y * zr1, r * z1);
+    }
+    glEnd();
+  }
+}
+
+void drawSphereVertices(double r, int lats, int longs) {
+  const bool SHOW_PRINT = false;
+  const char debug[] = "drawSphere(): ";
+  if (SHOW_PRINT) printf("%sDrawing sphere...\n", debug);
+  for (int i = 0; i <= lats; i++) {
+    double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
+    double z0 = sin(lat0);
+    double zr0 = cos(lat0);
+
+    double lat1 = M_PI * (-0.5 + (double)i / lats);
+    double z1 = sin(lat1);
+    double zr1 = cos(lat1);
+
+    glBegin(GL_POINTS);
+    glPointSize(5);
+    for (int j = 0; j <= longs; j++) {
+      double lng = 2 * M_PI * (double)(j - 1) / longs;
+      double x = cos(lng);
+      double y = sin(lng);
+      // Draw normal and vertex
+      // glNormal3f(x * zr0, y * zr0, z0);
+      glVertex3f(r * x * zr0, r * y * zr0, r * z0);
+
+      // Draw the vertex and vertex
+      // glNormal3f(x * zr1, y * zr1, z1);
+      glVertex3f(r * x * zr1, r * y * zr1, r * z1);
+    }
+    glEnd();
+  }
+}
+
+void createSphere(double r, double lats, double longs) {
   for (int i = 0; i < 10; i++) {
     for (int k = 0; k < 10; k++) {
       // u = starting u value + (j * stepsize u)
@@ -91,14 +168,6 @@ void init(void) {
 }
 
 void display(void) {
-  //   GLfloat blue[] = {0.0, 0.0, 1.0, 1.0};
-  GLfloat red[] = {1.0, 0.0, 0.0, 1.0};
-  GLfloat darkred[] = {0.3, 0.0, 0.0, 1.0};
-  //   GLfloat green[] = {0.0, 1.0, 0.0, 1.0};
-  GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
-  GLfloat gray[] = {0.8, 0.8, 0.8, 1.0};
-  GLfloat darkgray[] = {0.3, 0.3, 0.3, 1.0};
-
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /* draw surfaces as smooth shaded */
@@ -122,22 +191,16 @@ void display(void) {
   glRotatef(g_rotate, 0.0, 1.0, 0.0);
 
   /* set polygon colour */
-  glMaterialfv(GL_FRONT, GL_AMBIENT, darkgray);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, gray);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, DARK_GRAY);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, GRAY);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, WHITE);
   /* set point size so vertices are visible */
   glPointSize(5.0);
 
   /* Your code goes here */
 
-  /* sample drawing - draw a cone */
-  /* remove the cone code when you add your code above */
-  /* set colour of cone */
-  glMaterialfv(GL_FRONT, GL_AMBIENT, darkred);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, red);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-  /* move to location for object then draw it */
-  glutSolidCone(1.0, 2.0, 15, 15);
+  drawSphere(1, 10, 10);
+
   /* end draw a cone */
 
   glPopMatrix();
@@ -214,6 +277,8 @@ void update() {
  *  RGBA display mode, and handle input events.
  */
 int main(int argc, char** argv) {
+  const bool SHOW_DEBUG = true;
+  if (SHOW_DEBUG) printf("Running script...\n\n");
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
   glutInitWindowSize(1024, 768);
@@ -224,5 +289,6 @@ int main(int argc, char** argv) {
   glutKeyboardFunc(keyboard);
   glutIdleFunc(update);
   glutMainLoop();
+  if (SHOW_DEBUG) printf("\n\nScript complete.");
   return 0;
 }
