@@ -19,7 +19,7 @@
 #include <OpenGL/glu.h>
 
 typedef struct {
-  long double x, y, z;
+  long double x, y, z, xz;
 } Point;
 
 /* flags used to control the appearance of the image */
@@ -36,6 +36,18 @@ float g_rotate = 0.0;
 /* used for height map */
 int g_iHeight, g_iWidth, g_iDepth;
 int g_image[100][100];
+
+void createSphere() {
+  for (int i = 0; i < 10; i++) {
+    for (int k = 0; k < 10; k++) {
+      // u = starting u value + (j * stepsize u)
+      // v = starting v value + (j * stepsize v)
+      // x1 = ...
+      // y1 = ...
+      // z1 = ...
+    }
+  }
+}
 
 /*  Initialize material property and light source.  */
 void init(void) {
