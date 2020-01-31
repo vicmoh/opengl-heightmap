@@ -103,11 +103,11 @@ void drawSphereVertices(double r, int lats, int longs) {
       double x = cos(lng);
       double y = sin(lng);
       // Draw normal and vertex
-      // glNormal3f(x * zr0, y * zr0, z0);
+      glNormal3f(x * zr0, y * zr0, z0);
       glVertex3f(r * x * zr0, r * y * zr0, r * z0);
 
       // Draw the vertex and vertex
-      // glNormal3f(x * zr1, y * zr1, z1);
+      glNormal3f(x * zr1, y * zr1, z1);
       glVertex3f(r * x * zr1, r * y * zr1, r * z1);
     }
     glEnd();
@@ -199,7 +199,8 @@ void display(void) {
 
   /* Your code goes here */
 
-  drawSphere(1, 10, 10);
+  // drawSphere(1, 10, 10);
+  drawSphereVertices(1, 10, 10);
 
   /* end draw a cone */
 
