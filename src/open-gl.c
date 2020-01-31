@@ -36,12 +36,14 @@ GLfloat GRAY[] = {0.8, 0.8, 0.8, 1.0};
 GLfloat DARK_GRAY[] = {0.3, 0.3, 0.3, 1.0};
 
 /* flags used to control the appearance of the image */
-int g_lineDrawing = 0;  // draw polygons as solid or lines
-int g_lighting = 1;     // use diffuse and specular lighting
-int g_drawNormals = 0;  // draw normals on object
-int g_heightmap = 0;    // use heightmap to move vertices when == 1
-int g_drawDots = 0;     // draw only vertices when == 1
-int g_smoothShade = 1;  // use normal vertices when ==1,surface normals when ==0
+ShowAttribute g_attribute = {
+    .lineDrawing = false,  // draw polygons as solid or lines
+    .lighting = true,      // use diffuse and specular lighting
+    .drawNormals = false,  // draw normals on object
+    .heightmap = false,    // use heightmap to move vertices when ==
+    .drawDots = false,     // draw only vertices when == 1
+    .smoothShade =
+        true};  // use normal vertices when ==1,surface normals when ==0
 
 /* used to rotate object in update() */
 float g_rotate = 0.0;
@@ -151,7 +153,7 @@ void init(void) {
 
   /* if lighting is turned on then use ambient, diffuse and specular
      lights, otherwise use ambient lighting only */
-  if (g_lighting == 1) {
+  if (g_attribute.lighting == true) {
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_full_on);
@@ -184,7 +186,7 @@ void display(void) {
   glShadeModel(GL_SMOOTH);
 
   /* draw polygons as either solid or outlines */
-  if (g_lineDrawing == 1)
+  if (g_attribute.lineDrawing == true)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   else
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -208,8 +210,8 @@ void display(void) {
 
   /* Your code goes here */
 
-  if (g_drawDots == 1) drawSphereVerticesOnly(1, 10, 10);
-  if (g_drawDots == 0) drawSphere(1, 10, 10);
+  if (g_attribute.drawDots == true) drawSphereVerticesOnly(1, 10, 10);
+  if (g_attribute.drawDots == false) drawSphere(1, 10, 10);
 
   /* end draw a cone */
 
@@ -237,59 +239,64 @@ void keyboardControl(unsigned char key, int x, int y) {
       break;
 
     case '1':  // draw polygons as outlines
-      g_lineDrawing = 1;
-      g_lighting = 0;
-      g_drawDots = 0;
+      g_attribute = resetAttribute();
+      g_attribute.lineDrawing = true;
       init();
       display();
       break;
 
     case '2':  // draw polygons as filled but not shaded (ambient only)
-      g_lineDrawing = 0;
-      g_lighting = 0;
+      g_attribute = resetAttribute();
+      g_attribute.lineDrawing = false;
+      // g_lighting = 0;
       init();
       display();
       break;
 
-    case '3':  // diffuse and specular lighting, smooth shading
-      g_lineDrawing = 0;
-      g_lighting = 1;
+    case '3':  // diffuse and specular lighting, smooth shadina
+      g_attribute = resetAttribute();
+      g_attribute.lineDrawing = false;
+      g_attribute.lighting = true;
       init();
       display();
       break;
 
     case '4':  // draw vertices only, no polygons when ==1
-      if (g_drawDots == 0)
-        g_drawDots = 1;
+      g_attribute = resetAttribute();
+      if (g_attribute.drawDots == false)
+        g_attribute.drawDots = true;
       else
-        g_drawDots = 0;
+        g_attribute.drawDots = false;
       init();
       display();
       break;
 
     case '5':  // flat shade, use only one normal
-      if (g_smoothShade == 0)
-        g_smoothShade = 1;
+      g_attribute = resetAttribute();
+      if (g_attribute.smoothShade == false)
+        g_attribute.smoothShade = true;
       else
-        g_smoothShade = 0;
+        g_attribute.smoothShade = false;
       init();
       display();
       break;
 
     case '6':  // draw normals to points when ==1
-      if (g_drawNormals == 0)
-        g_drawNormals = 1;
+      g_attribute = resetAttribute();
+      if (g_attribute.drawNormals == false)
+        g_attribute.drawNormals = true;
       else
-        g_drawNormals = 0;
+        g_attribute.drawNormals = false;
       init();
       display();
       break;
 
     case '7':  // add height map to sphere when ==1
-      if (g_heightmap == 0)
-        g_heightmap = 1;
+      g_attribute = resetAttribute();
+      if (g_attribute.heightmap == false)
+        g_attribute.heightmap = true;
       else
-        g_heightmap = 0;
+        g_attribute.heightmap = false;
       init();
       display();
       break;
