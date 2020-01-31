@@ -23,6 +23,10 @@ typedef struct {
   long double x, y, z, xz;
 } Point;
 
+typedef struct {
+  bool lineDrawing, lighting, drawNormals, heightmap, drawDots, smoothShade;
+} ShowAttribute;
+
 GLfloat BLUE[] = {0.0, 0.0, 1.0, 1.0};
 GLfloat RED[] = {1.0, 0.0, 0.0, 1.0};
 GLfloat DARK_RED[] = {0.3, 0.0, 0.0, 1.0};
@@ -46,11 +50,16 @@ float g_rotate = 0.0;
 int g_iHeight, g_iWidth, g_iDepth;
 int g_image[100][100];
 
-void drawTest() {
-  glBegin(GL_POINT);
-  glPointSize(60);
-  glVertex3f(100, 100, 0);
-  glEnd();
+ShowAttribute resetAttribute() {
+  ShowAttribute new = {
+      .lineDrawing = false,
+      .lighting = true,
+      .drawNormals = false,
+      .heightmap = false,
+      .drawDots = false,
+      .smoothShade = true,
+  };
+  return new;
 }
 
 void drawSphere(double r, int lats, int longs) {
@@ -83,7 +92,7 @@ void drawSphere(double r, int lats, int longs) {
   }
 }
 
-void drawSphereVertices(double r, int lats, int longs) {
+void drawSphereVerticesOnly(double r, int lats, int longs) {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphere(): ";
   if (SHOW_PRINT) printf("%sDrawing sphere...\n", debug);
@@ -199,8 +208,8 @@ void display(void) {
 
   /* Your code goes here */
 
-  // drawSphere(1, 10, 10);
-  drawSphereVertices(1, 10, 10);
+  if (g_drawDots == 1) drawSphereVerticesOnly(1, 10, 10);
+  if (g_drawDots == 0) drawSphere(1, 10, 10);
 
   /* end draw a cone */
 
@@ -217,53 +226,72 @@ void reshape(int w, int h) {
   glLoadIdentity();
 }
 
-void keyboard(unsigned char key, int x, int y) {
+void keyboardControl(unsigned char key, int x, int y) {
   switch (key) {
+    // Esc key
     case 27:
+
+    // Quit
     case 'q':
       exit(0);
       break;
+
     case '1':  // draw polygons as outlines
       g_lineDrawing = 1;
       g_lighting = 0;
+      g_drawDots = 0;
       init();
       display();
       break;
+
     case '2':  // draw polygons as filled but not shaded (ambient only)
       g_lineDrawing = 0;
       g_lighting = 0;
       init();
       display();
       break;
+
     case '3':  // diffuse and specular lighting, smooth shading
       g_lineDrawing = 0;
       g_lighting = 1;
       init();
       display();
       break;
+
     case '4':  // draw vertices only, no polygons when ==1
       if (g_drawDots == 0)
         g_drawDots = 1;
       else
         g_drawDots = 0;
+      init();
+      display();
       break;
+
     case '5':  // flat shade, use only one normal
       if (g_smoothShade == 0)
         g_smoothShade = 1;
       else
         g_smoothShade = 0;
+      init();
+      display();
       break;
+
     case '6':  // draw normals to points when ==1
       if (g_drawNormals == 0)
         g_drawNormals = 1;
       else
         g_drawNormals = 0;
+      init();
+      display();
       break;
+
     case '7':  // add height map to sphere when ==1
       if (g_heightmap == 0)
         g_heightmap = 1;
       else
         g_heightmap = 0;
+      init();
+      display();
       break;
   }
 }
@@ -287,7 +315,7 @@ int main(int argc, char** argv) {
   init();
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
-  glutKeyboardFunc(keyboard);
+  glutKeyboardFunc(keyboardControl);
   glutIdleFunc(update);
   glutMainLoop();
   if (SHOW_DEBUG) printf("\n\nScript complete.");
