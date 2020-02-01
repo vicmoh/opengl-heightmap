@@ -108,7 +108,6 @@ void drawSphereVerticesOnly(double r, int lats, int longs) {
     double zr1 = cos(lat1);
 
     glBegin(GL_POINTS);
-    glPointSize(5);
     for (int j = 0; j <= longs; j++) {
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
@@ -183,7 +182,10 @@ void display(void) {
 
   /* draw surfaces as smooth shaded */
   /* do not change this to GL_FLAT, use normals for flat shading */
-  glShadeModel(GL_SMOOTH);
+  if (g_attribute.smoothShade == true)
+    glShadeModel(GL_SMOOTH);
+  else
+    glShadeModel(GL_FLAT);
 
   /* draw polygons as either solid or outlines */
   if (g_attribute.lineDrawing == true)
@@ -209,9 +211,10 @@ void display(void) {
   glPointSize(5.0);
 
   /* Your code goes here */
-
-  if (g_attribute.drawDots == true) drawSphereVerticesOnly(1, 10, 10);
-  if (g_attribute.drawDots == false) drawSphere(1, 10, 10);
+  const int numOfPoly = 50;
+  if (g_attribute.drawDots == true)
+    drawSphereVerticesOnly(1, numOfPoly, numOfPoly);
+  if (g_attribute.drawDots == false) drawSphere(1, numOfPoly, numOfPoly);
 
   /* end draw a cone */
 
@@ -248,7 +251,8 @@ void keyboardControl(unsigned char key, int x, int y) {
     case '2':  // draw polygons as filled but not shaded (ambient only)
       g_attribute = resetAttribute();
       g_attribute.lineDrawing = false;
-      // g_lighting = 0;
+      g_attribute.smoothShade = false;
+      g_attribute.lighting = false;
       init();
       display();
       break;
@@ -257,15 +261,18 @@ void keyboardControl(unsigned char key, int x, int y) {
       g_attribute = resetAttribute();
       g_attribute.lineDrawing = false;
       g_attribute.lighting = true;
+      g_attribute.smoothShade = true;
       init();
       display();
       break;
 
     case '4':  // draw vertices only, no polygons when ==1
       g_attribute = resetAttribute();
-      if (g_attribute.drawDots == false)
+      if (g_attribute.drawDots == false) {
         g_attribute.drawDots = true;
-      else
+        g_attribute.lighting = false;
+        g_attribute.smoothShade = false;
+      } else
         g_attribute.drawDots = false;
       init();
       display();
@@ -273,9 +280,9 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '5':  // flat shade, use only one normal
       g_attribute = resetAttribute();
-      if (g_attribute.smoothShade == false)
+      if (g_attribute.smoothShade == false) {
         g_attribute.smoothShade = true;
-      else
+      } else
         g_attribute.smoothShade = false;
       init();
       display();
