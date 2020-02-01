@@ -5,6 +5,13 @@
     },
     "cSpell.ignoreWords": [
         "g",
-        "lfloat"
+        "gl",
+        "lfloat",
+        "lightfv",
+        "lsizei",
+        "materialf",
+        "materialfv",
+        "rotatef",
+        "translatef"
     ]
 }
