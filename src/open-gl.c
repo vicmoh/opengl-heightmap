@@ -20,7 +20,7 @@
 #include <OpenGL/glu.h>
 
 typedef struct {
-  long double x, y, z, xz;
+  long double x, y, z;
 } Point;
 
 typedef struct {
@@ -67,7 +67,7 @@ ShowAttribute resetAttribute() {
 void drawSphere(double r, int lats, int longs) {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphere(): ";
-  if (SHOW_PRINT) printf("%sDrawing sphere...\n", debug);
+  if (SHOW_PRINT) printf("%sInvoked.\n", debug);
   for (int i = 0; i <= lats; i++) {
     double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
     double z0 = sin(lat0);
@@ -94,10 +94,64 @@ void drawSphere(double r, int lats, int longs) {
   }
 }
 
-void drawSphereVerticesOnly(double r, int lats, int longs) {
+/*
+. Calculating Normals
+. -------------------
+. You will also need to calculate the normals for each vertex.
+. The normals can be calculated by creating a vector from the
+. centre of the sphere to a vertex. If the sphere has a radius
+. of 1.0 then the normal will already be one unit long so you wont
+. need to normalize it (divide by the length of the normal in order
+. to make it one unit long). In this case the vertex is the same
+. as the normal.  If your sphere is larger than one unit
+. in radius then you will need to divide each vertex (x,y,z)
+. by the radius to make the normal one unit in size.
+*/
+void drawSphereNormals(double r, int lats, int longs) {
   const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphere(): ";
-  if (SHOW_PRINT) printf("%sDrawing sphere...\n", debug);
+  const char debug[] = "drawSphere():";
+  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
+  for (int i = 0; i <= lats; i++) {
+    double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
+    double z0 = sin(lat0);
+    double zr0 = cos(lat0);
+
+    double lat1 = M_PI * (-0.5 + (double)i / lats);
+    double z1 = sin(lat1);
+    double zr1 = cos(lat1);
+
+    glBegin(GL_POINTS);
+    for (int j = 0; j <= longs; j++) {
+      double lng = 2 * M_PI * (double)(j - 1) / longs;
+      double x = cos(lng);
+      double y = sin(lng);
+      // Draw normal and vertex
+      // glNormal3f(x * zr0, y * zr0, z0);
+
+      glColor3f(1, 0, 0);
+      glVertex3f(r * x * zr0, r * y * zr0, r * z0);
+      // Draw the vertex and vertex
+      // glNormal3f(x * zr1, y * zr1, z1);
+
+      glColor3f(0, 0, 1);
+      glVertex3f(r * x * zr1, r * y * zr1, r * z1);
+
+      glColor3f(1, 0, 0);
+      glVertex3f(r * x * zr0, r * y * zr0, r * z0);
+      // Draw the vertex and vertex
+      // glNormal3f(x * zr1, y * zr1, z1);
+
+      glColor3f(0, 0, 1);
+      glVertex3f(r * x * zr1, r * y * zr1, r * z1);
+    }
+    glEnd();
+  }
+}
+
+void drawSphereVertices(double r, int lats, int longs) {
+  const bool SHOW_PRINT = false;
+  const char debug[] = "drawSphereVertices():";
+  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
   for (int i = 0; i <= lats; i++) {
     double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
     double z0 = sin(lat0);
@@ -121,18 +175,6 @@ void drawSphereVerticesOnly(double r, int lats, int longs) {
       glVertex3f(r * x * zr1, r * y * zr1, r * z1);
     }
     glEnd();
-  }
-}
-
-void createSphere(double r, double lats, double longs) {
-  for (int i = 0; i < 10; i++) {
-    for (int k = 0; k < 10; k++) {
-      // u = starting u value + (j * stepsize u)
-      // v = starting v value + (j * stepsize v)
-      // x1 = ...
-      // y1 = ...
-      // z1 = ...
-    }
   }
 }
 
@@ -212,8 +254,7 @@ void display(void) {
 
   /* Your code goes here */
   const int numOfPoly = 50;
-  if (g_attribute.drawDots == true)
-    drawSphereVerticesOnly(1, numOfPoly, numOfPoly);
+  if (g_attribute.drawDots == true) drawSphereNormals(1, numOfPoly, numOfPoly);
   if (g_attribute.drawDots == false) drawSphere(1, numOfPoly, numOfPoly);
 
   /* end draw a cone */
