@@ -36,7 +36,7 @@ Array* getSphereVertices(double r, double lats, double longs,
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
       double y = sin(lng);
-      const double stepSize = 2;
+      ;
 
       if (type == VERTICES) {
         Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
@@ -45,10 +45,8 @@ Array* getSphereVertices(double r, double lats, double longs,
         Array_add(points, new_Point((x * zr0), (y * zr0), z0));
         Array_add(points, new_Point((x * zr1), (y * zr1), z1));
       } else if (type == HEIGHT_MAPS) {
-        Array_add(points, new_Point((x * zr0) + stepSize, (y * zr0) + stepSize,
-                                    z0 + stepSize));
-        Array_add(points, new_Point((x * zr1) + stepSize, (y * zr1) + stepSize,
-                                    z1 + stepSize));
+        Array_add(points, new_Point((x * zr0), (y * zr0), z0));
+        Array_add(points, new_Point((x * zr1), (y * zr1), z1));
       }
     }
   }

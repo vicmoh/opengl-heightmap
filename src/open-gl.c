@@ -55,6 +55,7 @@ int g_image[100][100];
 // The sphere vertices and normals
 Array* g_sphereVertices = NULL;
 Array* g_sphereNormals = NULL;
+Array* g_sphereHeightMaps = NULL;
 const int g_sphereRadius = 1;
 const double g_sphereNumOfPoly = 50;
 
@@ -86,7 +87,6 @@ void drawSphere(enum SphereType type) {
 
     // draw
     for (int y = 0; y <= g_sphereNumOfPoly; y++) {
-      if (type == NORMALS) glBegin(GL_LINES);
       // Draw first vertices
       Point* point1 = Array_get(g_sphereVertices, next);
       Point* norm1 = Array_get(g_sphereNormals, next);
@@ -94,21 +94,45 @@ void drawSphere(enum SphereType type) {
       glVertex3f(point1->x, point1->y, point1->z);
       if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point1->toString);
       next++;
-      // if (type == NORMALS) glEnd();
 
       // Draw the second points
-      // if (type == NORMALS) glBegin(GL_LINES);
       Point* point2 = Array_get(g_sphereVertices, next);
       Point* norm2 = Array_get(g_sphereNormals, next);
       glNormal3f(norm2->x, norm2->y, norm2->z);
       glVertex3f(point2->x, point2->y, point2->z);
       if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point2->toString);
       next++;
-      if (type == NORMALS) glEnd();
     }
 
     if (type == PLANES || type == VERTICES) glEnd();
   }
+}
+
+void drawSphereHeightMaps() {
+  const bool SHOW_PRINT = false;
+  const char debug[] = "drawSphere():";
+  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
+
+  // Loop through the vertices
+  int next = 0;
+  glBegin(GL_LINES);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
+  for (int x = 0; x <= g_sphereNumOfPoly; x++) {
+    for (int y = 0; y <= g_sphereNumOfPoly; y++) {
+      Point* hmp = Array_get(g_sphereNormals, next);
+      glVertex3f(0, 0, 0);
+      glVertex3f(hmp->x, hmp->y, hmp->z);
+      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, hmp->toString);
+      next++;
+
+      Point* hmp2 = Array_get(g_sphereNormals, next);
+      glVertex3f(0, 0, 0);
+      glVertex3f(hmp2->x, hmp2->y, hmp2->z);
+      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, hmp2->toString);
+      next++;
+    }
+  }
+  glEnd();
 }
 
 /*  Initialize material property and light source.  */
@@ -188,6 +212,8 @@ void display(void) {
   /* Your code goes here */
   if (g_attribute.drawNormals == true)
     drawSphere(NORMALS);
+  else if (g_attribute.heightmap)
+    drawSphereHeightMaps();
   else if (g_attribute.drawDots == true)
     drawSphere(VERTICES);
   else if (g_attribute.drawDots == false)
@@ -302,6 +328,8 @@ int main(int argc, char** argv) {
                                        g_sphereNumOfPoly, VERTICES);
   g_sphereNormals = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
                                       g_sphereNumOfPoly, NORMALS);
+  g_sphereHeightMaps = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
+                                         g_sphereNumOfPoly, HEIGHT_MAPS);
 
   // Render
   glutInit(&argc, argv);
@@ -318,6 +346,7 @@ int main(int argc, char** argv) {
   // Free and exit
   free_Array(g_sphereVertices);
   free_Array(g_sphereNormals);
+  free_Array(g_sphereHeightMaps);
   if (SHOW_DEBUG) printf("\n\nScript complete.");
   return 0;
 }
