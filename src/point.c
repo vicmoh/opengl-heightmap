@@ -5,8 +5,8 @@ Point* new_Point(double x, double y, double z) {
   this->x = x;
   this->y = y;
   this->z = z;
-  this->toString =
-      $("{x: ", _(this->x, 10), ", y: ", _(this->y, 10), ", z: ", _(this->z, 10), "}");
+  this->toString = $("{x: ", _(this->x, 10), ", y: ", _(this->y, 10),
+                     ", z: ", _(this->z, 10), "}");
   return this;
 }
 

@@ -52,6 +52,12 @@ float g_rotate = 0.0;
 int g_iHeight, g_iWidth, g_iDepth;
 int g_image[100][100];
 
+// The sphere vertices and normals
+Array* g_sphereVertices = NULL;
+Array* g_sphereNormals = NULL;
+const int g_sphereRadius = 1;
+const double g_sphereNumOfPoly = 50;
+
 ShowAttribute resetAttribute() {
   ShowAttribute new = {
       .lineDrawing = false,
@@ -64,68 +70,44 @@ ShowAttribute resetAttribute() {
   return new;
 }
 
-void drawSphere(double r, int lats, int longs) {
+void drawSphere() {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphereVertices():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 
   // Loop through the vertices
-  Array* points = getSphereVertices(r, lats, longs, false);
-  Array* norms = getSphereVertices(r, lats, longs, true);
-  glBegin(GL_QUAD_STRIP);
-  for (int x = 0; x <= lats; x++) {
-    for (int y = 0; y <= longs; y++) {
-      Point* eachPoint = Array_get(points, x);
-      Point* eachNorm = Array_get(norms, x);
-      glNormal3f(eachNorm->x, eachNorm->y, eachNorm->z);
-      glVertex3f(eachPoint->x, eachPoint->y, eachPoint->z);
-      printf("%s vertex: %s\n", debug, eachPoint->toString);
-    }
-  }
-  glEnd();
+  int next = 0;
+  for (int x = 0; x <= g_sphereNumOfPoly; x++) {
+    glBegin(GL_QUAD_STRIP);
+    for (int y = 0; y <= g_sphereNumOfPoly; y++) {
+      Point* point1 = Array_get(g_sphereVertices, next);
+      Point* norm1 = Array_get(g_sphereNormals, next);
+      glNormal3f(norm1->x, norm1->y, norm1->z);
+      glVertex3f(point1->x, point1->y, point1->z);
+      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point1->toString);
+      next++;
 
-  // Free
-  free_Array(norms);
-  free_Array(points);
+      Point* point2 = Array_get(g_sphereVertices, next);
+      Point* norm2 = Array_get(g_sphereNormals, next);
+      glNormal3f(norm2->x, norm2->y, norm2->z);
+      glVertex3f(point2->x, point2->y, point2->z);
+      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point2->toString);
+      next++;
+    }
+    glEnd();
+  }
 }
 
-/*
-. Calculating Normals
-. -------------------
-. You will also need to calculate the normals for each vertex.
-. The normals can be calculated by creating a vector from the
-. centre of the sphere to a vertex. If the sphere has a radius
-. of 1.0 then the normal will already be one unit long so you wont
-. need to normalize it (divide by the length of the normal in order
-. to make it one unit long). In this case the vertex is the same
-. as the normal.  If your sphere is larger than one unit
-. in radius then you will need to divide each vertex (x,y,z)
-. by the radius to make the normal one unit in size.
-*/
-void drawSphereNormals(double r, int lats, int longs) {
+void drawSphereNormals() {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphere():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 }
 
-void drawSphereVertices(double r, int lats, int longs) {
+void drawSphereVertices() {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphereVertices():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
-
-  // Loop through the vertices
-  Array* points = getSphereVertices(r, lats, longs, false);
-  glBegin(GL_POINTS);
-  for (int x = 0; x <= lats; x++) {
-    for (int y = 0; y <= longs; y++) {
-      Point* eachPoint = Array_get(points, x);
-      glVertex3f(eachPoint->x, eachPoint->y, eachPoint->z);
-    }
-  }
-  glEnd();
-
-  // Free
-  free_Array(points);
 }
 
 /*  Initialize material property and light source.  */
@@ -203,12 +185,10 @@ void display(void) {
   glPointSize(5.0);
 
   /* Your code goes here */
-  const int numOfPoly = 50;
-  if (g_attribute.drawDots == true) drawSphereNormals(1, numOfPoly, numOfPoly);
-  if (g_attribute.drawDots == false) drawSphere(1, numOfPoly, numOfPoly);
+  if (g_attribute.drawDots == true) drawSphereNormals();
+  if (g_attribute.drawDots == false) drawSphere();
 
-  /* end draw a cone */
-
+  // Flush and pop matrix
   glPopMatrix();
   glFlush();
 }
@@ -313,6 +293,12 @@ void update() {
 int main(int argc, char** argv) {
   const bool SHOW_DEBUG = true;
   if (SHOW_DEBUG) printf("Running script...\n\n");
+  g_sphereVertices = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
+                                       g_sphereNumOfPoly, false);
+  g_sphereNormals = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
+                                      g_sphereNumOfPoly, true);
+
+  // Render
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
   glutInitWindowSize(1024, 768);
@@ -323,6 +309,10 @@ int main(int argc, char** argv) {
   glutKeyboardFunc(keyboardControl);
   glutIdleFunc(update);
   glutMainLoop();
+
+  // Free and exit
+  free_Array(g_sphereVertices);
+  free_Array(g_sphereNormals);
   if (SHOW_DEBUG) printf("\n\nScript complete.");
   return 0;
 }

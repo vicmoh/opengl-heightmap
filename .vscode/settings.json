@@ -2,7 +2,8 @@
     "files.associations": {
         "stdlib.h": "c",
         "bit": "c",
-        "point.h": "c"
+        "point.h": "c",
+        "dynamic_string.h": "c"
     },
     "cSpell.ignoreWords": [
         "g",

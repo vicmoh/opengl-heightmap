@@ -7,7 +7,7 @@
 #include "dynamic_string.h"
 
 typedef struct {
-  double x, y, z;
+  long double x, y, z;
   String toString;
 } Point;
 
