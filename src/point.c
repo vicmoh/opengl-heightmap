@@ -75,6 +75,15 @@ Array* getRGBFromFile(String pgmFile) {
   Array* listOfRGB = new_Array(free);
   FileReader* fr = new_FileReader(pgmFile);
 
+  // Check if file exist.
+  if (fr == NULL) {
+    printf("Could not find the file. Please re-enter the FILE argument.\n");
+    return;
+  } else {
+    free_FileReader(fr);
+    exit(0);
+  }
+
   // Loop through each line of the file.
   for_in(nextLine, fr) {
     if (nextLine < 3) continue;

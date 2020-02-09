@@ -135,7 +135,6 @@ void drawSphereHeightMaps() {
   glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
   for (int x = 0; x <= g_sphereNumOfPoly; x++) {
     for (int y = 0; y <= g_sphereNumOfPoly; y++) {
-
       // Get the normals of and draw lines.
       Point* hmp = Array_get(g_sphereHeightMaps, next);
       glVertex3f(0, 0, 0);
@@ -196,7 +195,6 @@ void init(void) {
   glEnable(GL_LIGHT1);
   glEnable(GL_DEPTH_TEST);
 }
-
 
 /**
  * Display function to be called as the callback
@@ -370,6 +368,14 @@ void update() {
 int main(int argc, char** argv) {
   const bool SHOW_DEBUG = true;
   if (SHOW_DEBUG) printf("Running script...\n\n");
+
+  // Check if argument exist.
+  if (argc == 0 || argv[1] == NULL) {
+    printf(
+        "NO ARGUMENT FOUND! PLEASE SPECIFY ARGUMENT. Please read the README "
+        "provided for more information.\n");
+    return;
+  }
 
   // Initialize the vertices for the sphere before hand.
   g_sphereVertices = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
