@@ -10,14 +10,45 @@
 
 enum SphereType { PLANES, VERTICES, NORMALS, HEIGHT_MAPS };
 
+/**
+ * Attribute of the point class object.
+ */
 typedef struct {
   long double x, y, z;
   String toString;
 } Point;
 
+/**
+ * Constructor for creating a new point.
+ * @param x-axis of the vertex.
+ * @param y-axis of the vertex.
+ * @param z-axis of the vertex.
+ * @return allocated point.
+ */
 Point* new_Point(double x, double y, double z);
+
+/**
+ * Destroyer for freeing the point object.
+ */
 void free_Point(Point* this);
-Array* getSphereVertices(double r, double lats, double longs,
+
+/**
+ * Get the spehere vertices based of the latitude, longitude,
+ * and the radius of the sphere.
+ * @param radius of the sphere.
+ * @param lats of the sphere.
+ * @param longs of the sphere.
+ * @param type of the vertex data to get.
+ * @return an allocated array of vertices of the spheres.
+ */
+Array* getSphereVertices(double radius, double lats, double longs,
                          enum SphereType type);
+
+/**
+ * Get the RGB value of the PGM file.
+ * @param pgmFile include the path.
+ * @return return allocated array of the RGB.
+ */
+Array* getRGBFromFile(String pgmFile);
 
 #endif
