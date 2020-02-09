@@ -46,7 +46,7 @@ Array* getSphereVertices(double r, double lats, double longs,
             calcPointHeightBasedOnRGB(*(double*)Array_get(rgb, nextRGB)) + 1.1;
 
       // For the shape to draw the planes.
-      if (type == PLANES && rgb != null)
+      if ((type == HEIGHT_MAP || type == NORMALS) && rgb != null)
         stepSize =
             calcPointHeightBasedOnRGB(*(double*)Array_get(rgb, nextRGB)) + 1.0;
 
@@ -66,11 +66,10 @@ Array* getSphereVertices(double r, double lats, double longs,
       double y = sin(lng);
 
       // Case for the spehere.
-      if (type == VERTICES) {
+      if (type == VERTICES || type == HEIGHT_MAP) {
         Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
         Array_add(points, new_Point(r * x * zr1, r * y * zr1, r * z1));
-      } else if (type == NORMALS || type == NORMAL_LINES ||
-                 type == HEIGHT_MAP) {
+      } else if (type == NORMALS || type == NORMAL_LINES) {
         Array_add(points, new_Point((x * zr0), (y * zr0), z0));
         Array_add(points, new_Point((x * zr1), (y * zr1), z1));
       }
