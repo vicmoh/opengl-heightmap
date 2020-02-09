@@ -27,8 +27,6 @@ typedef struct {
   bool lineDrawing, lighting, drawNormals, heightmap, drawDots, smoothShade;
 } ShowAttribute;
 
-enum SphereType { PLANES, VERTICES };
-
 GLfloat BLUE[] = {0.0, 0.0, 1.0, 1.0};
 GLfloat RED[] = {1.0, 0.0, 0.0, 1.0};
 GLfloat DARK_RED[] = {0.3, 0.0, 0.0, 1.0};
@@ -80,41 +78,37 @@ void drawSphere(enum SphereType type) {
   // Loop through the vertices
   int next = 0;
   for (int x = 0; x <= g_sphereNumOfPoly; x++) {
+    // Init the draw type
     if (type == PLANES)
       glBegin(GL_QUAD_STRIP);
     else if (type == VERTICES)
       glBegin(GL_POINTS);
-    else
-      exit(0);
+
+    // draw
     for (int y = 0; y <= g_sphereNumOfPoly; y++) {
+      if (type == NORMALS) glBegin(GL_LINES);
+      // Draw first vertices
       Point* point1 = Array_get(g_sphereVertices, next);
       Point* norm1 = Array_get(g_sphereNormals, next);
       glNormal3f(norm1->x, norm1->y, norm1->z);
       glVertex3f(point1->x, point1->y, point1->z);
       if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point1->toString);
       next++;
+      // if (type == NORMALS) glEnd();
 
+      // Draw the second points
+      // if (type == NORMALS) glBegin(GL_LINES);
       Point* point2 = Array_get(g_sphereVertices, next);
       Point* norm2 = Array_get(g_sphereNormals, next);
       glNormal3f(norm2->x, norm2->y, norm2->z);
       glVertex3f(point2->x, point2->y, point2->z);
       if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point2->toString);
       next++;
+      if (type == NORMALS) glEnd();
     }
-    glEnd();
+
+    if (type == PLANES || type == VERTICES) glEnd();
   }
-}
-
-void drawSphereNormals() {
-  const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphere():";
-  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
-}
-
-void drawSphereVertices() {
-  const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphereVertices():";
-  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 }
 
 /*  Initialize material property and light source.  */
@@ -192,8 +186,12 @@ void display(void) {
   glPointSize(5.0);
 
   /* Your code goes here */
-  if (g_attribute.drawDots == true) drawSphere(VERTICES);
-  if (g_attribute.drawDots == false) drawSphere(PLANES);
+  if (g_attribute.drawNormals == true)
+    drawSphere(NORMALS);
+  else if (g_attribute.drawDots == true)
+    drawSphere(VERTICES);
+  else if (g_attribute.drawDots == false)
+    drawSphere(PLANES);
 
   // Flush and pop matrix
   glPopMatrix();
@@ -301,9 +299,9 @@ int main(int argc, char** argv) {
   const bool SHOW_DEBUG = true;
   if (SHOW_DEBUG) printf("Running script...\n\n");
   g_sphereVertices = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
-                                       g_sphereNumOfPoly, false);
+                                       g_sphereNumOfPoly, VERTICES);
   g_sphereNormals = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
-                                      g_sphereNumOfPoly, true);
+                                      g_sphereNumOfPoly, NORMALS);
 
   // Render
   glutInit(&argc, argv);

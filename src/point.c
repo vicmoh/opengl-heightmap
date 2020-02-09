@@ -15,7 +15,8 @@ void free_Point(Point* this) {
   free(this);
 }
 
-Array* getSphereVertices(double r, double lats, double longs, bool getNorm) {
+Array* getSphereVertices(double r, double lats, double longs,
+                         enum SphereType type) {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphereVertices():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
@@ -35,12 +36,19 @@ Array* getSphereVertices(double r, double lats, double longs, bool getNorm) {
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
       double y = sin(lng);
-      if (!getNorm) {
+      const double stepSize = 2;
+
+      if (type == VERTICES) {
         Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
         Array_add(points, new_Point(r * x * zr1, r * y * zr1, r * z1));
-      } else if (getNorm) {
-        Array_add(points, new_Point(x * zr0, y * zr0, z0));
-        Array_add(points, new_Point(x * zr1, y * zr1, z1));
+      } else if (type == NORMALS) {
+        Array_add(points, new_Point((x * zr0), (y * zr0), z0));
+        Array_add(points, new_Point((x * zr1), (y * zr1), z1));
+      } else if (type == HEIGHT_MAPS) {
+        Array_add(points, new_Point((x * zr0) + stepSize, (y * zr0) + stepSize,
+                                    z0 + stepSize));
+        Array_add(points, new_Point((x * zr1) + stepSize, (y * zr1) + stepSize,
+                                    z1 + stepSize));
       }
     }
   }

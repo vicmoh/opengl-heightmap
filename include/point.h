@@ -6,6 +6,8 @@
 #include "array_map.h"
 #include "dynamic_string.h"
 
+enum SphereType { PLANES, VERTICES, NORMALS, HEIGHT_MAPS };
+
 typedef struct {
   long double x, y, z;
   String toString;
@@ -13,6 +15,7 @@ typedef struct {
 
 Point* new_Point(double x, double y, double z);
 void free_Point(Point* this);
-Array* getSphereVertices(double r, double lats, double longs, bool getNorm);
+Array* getSphereVertices(double r, double lats, double longs,
+                         enum SphereType type);
 
 #endif
