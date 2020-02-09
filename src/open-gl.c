@@ -91,7 +91,7 @@ ShowAttribute resetAttribute() {
  */
 void drawSphere(enum SphereType type) {
   const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphere():";
+  String debug = $("drawSphere():");
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 
   // Loop through the vertices.
@@ -125,11 +125,12 @@ void drawSphere(enum SphereType type) {
     // End drawing based on the types.
     if (type == PLANES || type == VERTICES) glEnd();
   }
+  dispose(debug);
 }
 
 void drawSphereNormalLines(Array* vertices) {
   const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphere():";
+  String debug = $("drawSphere():");
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 
   // Loop through the vertices
@@ -154,6 +155,7 @@ void drawSphereNormalLines(Array* vertices) {
     }
   }
   glEnd();
+  dispose(debug);
 }
 
 /**
