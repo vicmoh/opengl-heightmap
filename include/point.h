@@ -7,12 +7,12 @@
 #include "dynamic_string.h"
 
 typedef struct {
-  long double x, y, z;
+  double x, y, z;
   String toString;
 } Point;
 
-Point* new_Point(long double x, long double y, long double z);
+Point* new_Point(double x, double y, double z);
 void free_Point(Point* this);
-Array* getSphereVertices(double r, double lats, double longs);
+Array* getSphereVertices(double r, double lats, double longs, bool getNorm);
 
 #endif

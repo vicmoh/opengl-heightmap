@@ -1,6 +1,6 @@
 #include "point.h"
 
-Point* new_Point(long double x, long double y, long double z) {
+Point* new_Point(double x, double y, double z) {
   Point* this = malloc(sizeof(Point));
   this->x = x;
   this->y = y;
@@ -15,7 +15,7 @@ void free_Point(Point* this) {
   free(this);
 }
 
-Array* getSphereVertices(double r, double lats, double longs) {
+Array* getSphereVertices(double r, double lats, double longs, bool getNorm) {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphereVertices():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
@@ -35,8 +35,13 @@ Array* getSphereVertices(double r, double lats, double longs) {
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
       double y = sin(lng);
-      Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
-      Array_add(points, new_Point(r * x * zr1, r * y * zr1, r * z1));
+      if (!getNorm) {
+        Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
+        Array_add(points, new_Point(r * x * zr1, r * y * zr1, r * z1));
+      } else if (getNorm) {
+        Array_add(points, new_Point(x * zr0, y * zr0, z0));
+        Array_add(points, new_Point(x * zr1, y * zr1, z1));
+      }
     }
   }
   return points;
