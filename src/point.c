@@ -33,10 +33,10 @@ Array* getSphereVertices(double r, double lats, double longs,
 
   // Loop through to create the vertices of the sphere.
   // Calculate and added to the array of points.
-  for (int i = 0; i <= lats; i++) {
+  loop(i, 0, lats) {
     // Calculate and add the points to the array
     // depending the type of sphere created.
-    for (int j = 0; j <= longs; j++) {
+    loop(j, 0, longs) {
       /// Determine if the normals is showed for the height map.
       nextRGB++;
       double stepSize = 1;
@@ -44,6 +44,11 @@ Array* getSphereVertices(double r, double lats, double longs,
       if (type == NORMAL_LINES && rgb != null)
         stepSize =
             calcPointHeightBasedOnRGB(*(double*)Array_get(rgb, nextRGB)) + 1.1;
+
+      // For the shape to draw the planes.
+      if (type == PLANES && rgb != null)
+        stepSize =
+            calcPointHeightBasedOnRGB(*(double*)Array_get(rgb, nextRGB)) + 1.0;
 
       // Calculate the size of the circle.
       double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
