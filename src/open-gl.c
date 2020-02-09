@@ -79,7 +79,7 @@ void drawSphere(double r, int lats, int longs) {
       Point* eachNorm = Array_get(norms, x);
       glNormal3f(eachNorm->x, eachNorm->y, eachNorm->z);
       glVertex3f(eachPoint->x, eachPoint->y, eachPoint->z);
-      printf("%s vertex: %f\n", debug, eachPoint->toString);
+      printf("%s vertex: %s\n", debug, eachPoint->toString);
     }
   }
   glEnd();
