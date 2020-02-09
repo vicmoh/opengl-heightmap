@@ -69,6 +69,7 @@ Array* getSphereVertices(double r, double lats, double longs,
 
 Array* getRGBFromFile(String pgmFile) {
   // Debugger
+  const bool SHOW_PRINT = false;
   String debug = $("getRGBFromFile(): ");
 
   // Initialize the arrays and file reader
@@ -101,8 +102,9 @@ Array* getRGBFromFile(String pgmFile) {
   }
 
   // Print the list of RGB of the array from the file.
-  for_in(next, listOfRGB) printf("%s RGB[%d]: %f\n", debug, next,
-                                 *(double*)Array_get(listOfRGB, next));
+  if (SHOW_PRINT)
+    for_in(next, listOfRGB) printf("%s RGB[%d]: %f\n", debug, next,
+                                   *(double*)Array_get(listOfRGB, next));
 
   // Free and return.
   dispose(debug);

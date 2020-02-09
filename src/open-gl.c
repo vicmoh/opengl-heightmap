@@ -57,6 +57,7 @@ ShowAttribute g_attribute = {
 float g_rotate = 0.0;
 
 // The sphere vertices and normals global variables.
+Array* g_rgbHeightMapScales = NULL;
 Array* g_sphereVertices = NULL;
 Array* g_sphereNormals = NULL;
 Array* g_sphereHeightMaps = NULL;
@@ -366,17 +367,24 @@ void update() {
  * @param argv is list of argument values.
  */
 int main(int argc, char** argv) {
-  const bool SHOW_DEBUG = true;
-  if (SHOW_DEBUG) printf("Running script...\n\n");
+  const bool SHOW_DEBUG = false;
+  printf("Running script...\n\n");
 
   // Check if argument exist.
   if (argc == 0 || argv[1] == NULL) {
     printf(
         "NO ARGUMENT FOUND! PLEASE SPECIFY ARGUMENT. Please read the README "
         "provided for more information.\n");
-    if (SHOW_DEBUG) printf("\nScript complete.\n");
+    printf("\nScript complete.\n");
     return 0;
   }
+
+  // Print the RGB values for debugging.
+  printf("Running on file \"%s\".\n\n", argv[1]);
+  g_rgbHeightMapScales = getRGBFromFile(argv[1]);
+  if (SHOW_DEBUG)
+    for_in(next, g_rgbHeightMapScales) printf(
+        "RGB[%d]: %f\n", next, *(double*)Array_get(g_rgbHeightMapScales, next));
 
   // Initialize the vertices for the sphere before hand.
   g_sphereVertices = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
@@ -399,9 +407,10 @@ int main(int argc, char** argv) {
   glutMainLoop();
 
   // Free and exit.
+  free_Array(g_rgbHeightMapScales);
   free_Array(g_sphereVertices);
   free_Array(g_sphereNormals);
   free_Array(g_sphereHeightMaps);
-  if (SHOW_DEBUG) printf("\nScript complete.\n");
+  printf("\nScript complete.\n");
   return 0;
 }
