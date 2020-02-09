@@ -5,11 +5,15 @@ Point* new_Point(long double x, long double y, long double z) {
   this->x = x;
   this->y = y;
   this->z = z;
-  this->toString = $("");
+  this->toString =
+      $("{x: ", _(this->x), ", y: ", _(this->y), ", z: ", _(this->z), "}");
   return this;
 }
 
-void free_Point(Point* this) { free(this); }
+void free_Point(Point* this) {
+  free(this->toString);
+  free(this);
+}
 
 Array* getSphereVertices(double r, double lats, double longs) {
   const bool SHOW_PRINT = false;
@@ -31,6 +35,9 @@ Array* getSphereVertices(double r, double lats, double longs) {
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
       double y = sin(lng);
+      Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
+      Array_add(points, new_Point(r * x * zr1, r * y * zr1, r * z1));
     }
   }
+  return points;
 }

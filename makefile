@@ -19,7 +19,7 @@ run: compile
 
 # Compile the program.
 compile:
-	gcc -Wall -pedantic -std=c11 ./src/*.c $(LIB_FILE) -o ./bin/run $(LIB_INC) $(INCLUDES) $(TARGET)
+	gcc -Wall -std=c11 ./src/*.c $(LIB_FILE) -o ./bin/run $(LIB_INC) $(INCLUDES) $(TARGET)
 
 # Run git add commit push.
 git:
