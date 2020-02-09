@@ -54,4 +54,20 @@ Array* getSphereVertices(double r, double lats, double longs,
   return points;
 }
 
-Array* getRGBFromPGM(String fileName) { Array* listOfRGB = new_Array(free); }
+Array* getRGBFromPGM(String fileName) { 
+  Array* listOfRGB = new_Array(free); 
+  FileReader* fr = new_FileReader(fileName);
+
+  // Loop through each line of the file.
+  for_in(nextLine, fr){
+    if (nextLine < 3) continue;
+    String line = FileReader_getLineAt(fr, nextLine);
+
+    // Split the line string to get each rgb color
+    // in the same line.
+    Splitter* tok = new_Splitter(line, " ");
+    for_in(nexTok, tok) a
+    free_FileReader(fr);
+  }
+  free_FileReader(fileName);
+}

@@ -40,7 +40,7 @@ int FileReader_getLength(FileReader* this);
 /**
  * Get the string at index of line.
  * @param this @FileReader object.
- * @return
+ * @return an allocated string of the line.
  */
 char* FileReader_getLineAt(FileReader* this, int index);
 

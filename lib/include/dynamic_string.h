@@ -35,6 +35,7 @@
 #define String char*
 #define var void*
 #define null NULL
+#define Number double*
 
 /// Helper functionality.
 #define $(...) __newString(__VA_ARGS__, NULL)
@@ -43,8 +44,9 @@
 #define free(val)             \
   if (val != NULL) free(val); \
   val = NULL
-#define numberToString(...) __numberToString(__ARGS(__VA_ARGS__), (double) __VA_ARGS__)
-#define _(...) __numberToString(__ARGS(__VA_ARGS__), (double) __VA_ARGS__)
+#define numberToString(...) \
+  __numberToString(__ARGS(__VA_ARGS__), (double)__VA_ARGS__)
+#define _(...) __numberToString(__ARGS(__VA_ARGS__), (double)__VA_ARGS__)
 
 // Credit for lambda https://blog.noctua-software.com/c-lambda.html
 #define LAMBDA(varfunction) ({ varfunction function; })
@@ -75,6 +77,17 @@
     instance;                                          \
   } object;                                            \
   function constructor
+
+/* -------------------------------------------------------------------------- */
+/*                              Number Functions                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Allocated a new number.
+ * @param value of the number.
+ * @return the allocated number.
+ */
+double* new_Number(double value);
 
 /* -------------------------------------------------------------------------- */
 /*                              String Functions                              */
