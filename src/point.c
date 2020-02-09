@@ -36,7 +36,6 @@ Array* getSphereVertices(double r, double lats, double longs,
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
       double y = sin(lng);
-      ;
 
       if (type == VERTICES) {
         Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
