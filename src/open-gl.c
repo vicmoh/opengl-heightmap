@@ -374,7 +374,8 @@ int main(int argc, char** argv) {
     printf(
         "NO ARGUMENT FOUND! PLEASE SPECIFY ARGUMENT. Please read the README "
         "provided for more information.\n");
-    return;
+    if (SHOW_DEBUG) printf("\nScript complete.\n");
+    return 0;
   }
 
   // Initialize the vertices for the sphere before hand.
@@ -401,6 +402,6 @@ int main(int argc, char** argv) {
   free_Array(g_sphereVertices);
   free_Array(g_sphereNormals);
   free_Array(g_sphereHeightMaps);
-  if (SHOW_DEBUG) printf("\n\nScript complete.");
+  if (SHOW_DEBUG) printf("\nScript complete.\n");
   return 0;
 }

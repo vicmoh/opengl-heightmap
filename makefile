@@ -15,7 +15,7 @@ m = [AUTO]
 
 # Run the program.
 run: compile
-	./bin/run
+	./bin/run $(FILE)
 
 # Compile the program.
 compile:
