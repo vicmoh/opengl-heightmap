@@ -21,6 +21,7 @@
 
 // My library.
 #include "array_map.h"
+#include "dynamic_string.h"
 #include "point.h"
 
 /* -------------------------------------------------------------------------- */
@@ -57,10 +58,11 @@ ShowAttribute g_attribute = {
 float g_rotate = 0.0;
 
 // The sphere vertices and normals global variables.
-Array* g_rgbHeightMapScales = NULL;
-Array* g_sphereVertices = NULL;
-Array* g_sphereNormals = NULL;
-Array* g_sphereHeightMaps = NULL;
+Array* g_rgbHeightMapScales = null;
+Array* g_sphereHeightMapNormalLines = null;
+Array* g_sphereVertices = null;
+Array* g_sphereNormals = null;
+Array* g_sphereNormalLines = null;
 const int g_sphereRadius = 1;
 const double g_sphereNumOfPoly = 50;
 
@@ -94,7 +96,7 @@ void drawSphere(enum SphereType type) {
 
   // Loop through the vertices.
   int next = 0;
-  for (int x = 0; x <= g_sphereNumOfPoly; x++) {
+  loop(x, 0, g_sphereNumOfPoly) {
     // Initialize and draw type based on the types.
     if (type == PLANES)
       glBegin(GL_QUAD_STRIP);
@@ -102,7 +104,7 @@ void drawSphere(enum SphereType type) {
       glBegin(GL_POINTS);
 
     // draw
-    for (int y = 0; y <= g_sphereNumOfPoly; y++) {
+    loop(y, 0, g_sphereNumOfPoly) {
       // Draw first vertices
       Point* point1 = Array_get(g_sphereVertices, next);
       Point* norm1 = Array_get(g_sphereNormals, next);
@@ -125,7 +127,7 @@ void drawSphere(enum SphereType type) {
   }
 }
 
-void drawSphereHeightMaps() {
+void drawSphereNormalLines(Array* vertices) {
   const bool SHOW_PRINT = false;
   const char debug[] = "drawSphere():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
@@ -134,20 +136,20 @@ void drawSphereHeightMaps() {
   int next = 0;
   glBegin(GL_LINES);
   glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
-  for (int x = 0; x <= g_sphereNumOfPoly; x++) {
-    for (int y = 0; y <= g_sphereNumOfPoly; y++) {
+  loop(x, 0, g_sphereNumOfPoly) {
+    loop(y, 0, g_sphereNumOfPoly) {
       // Get the normals of and draw lines.
-      Point* hmp = Array_get(g_sphereHeightMaps, next);
+      Point* point1 = Array_get(vertices, next);
       glVertex3f(0, 0, 0);
-      glVertex3f(hmp->x, hmp->y, hmp->z);
-      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, hmp->toString);
+      glVertex3f(point1->x, point1->y, point1->z);
+      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point1->toString);
       next++;
 
       // Get the normals of and draw lines.
-      Point* hmp2 = Array_get(g_sphereHeightMaps, next);
+      Point* point2 = Array_get(vertices, next);
       glVertex3f(0, 0, 0);
-      glVertex3f(hmp2->x, hmp2->y, hmp2->z);
-      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, hmp2->toString);
+      glVertex3f(point2->x, point2->y, point2->z);
+      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point2->toString);
       next++;
     }
   }
@@ -235,9 +237,12 @@ void display(void) {
   glPointSize(5.0);
 
   // Draw and render the sphere.
-  if (g_attribute.drawNormals == true) {
+  if (g_attribute.heightmap == true) {
     drawSphere(PLANES);
-    drawSphereHeightMaps();
+    drawSphereNormalLines(g_sphereHeightMapNormalLines);
+  } else if (g_attribute.drawNormals == true) {
+    drawSphere(PLANES);
+    drawSphereNormalLines(g_sphereNormalLines);
   } else if (g_attribute.drawDots == true)
     drawSphere(VERTICES);
   else if (g_attribute.drawDots == false)
@@ -371,7 +376,7 @@ int main(int argc, char** argv) {
   printf("Running script...\n\n");
 
   // Check if argument exist.
-  if (argc == 0 || argv[1] == NULL) {
+  if (argc == 0 || argv[1] == null) {
     printf(
         "NO ARGUMENT FOUND! PLEASE SPECIFY ARGUMENT. Please read the README "
         "provided for more information.\n");
@@ -386,13 +391,20 @@ int main(int argc, char** argv) {
     for_in(next, g_rgbHeightMapScales) printf(
         "RGB[%d]: %f\n", next, *(double*)Array_get(g_rgbHeightMapScales, next));
 
-  // Initialize the vertices for the sphere before hand.
+  // Initialize the vertices for the sphere before hand
   g_sphereVertices = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
-                                       g_sphereNumOfPoly, VERTICES);
+                                       g_sphereNumOfPoly, VERTICES, null);
   g_sphereNormals = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
-                                      g_sphereNumOfPoly, NORMALS);
-  g_sphereHeightMaps = getSphereVertices(g_sphereRadius, g_sphereNumOfPoly,
-                                         g_sphereNumOfPoly, HEIGHT_MAPS);
+                                      g_sphereNumOfPoly, NORMALS, null);
+
+  // Sphere with the normal lines
+  g_sphereNormalLines = getSphereVertices(
+      g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, NORMAL_LINES, null);
+
+  // Height map with normal lines
+  g_sphereHeightMapNormalLines =
+      getSphereVertices(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                        NORMAL_LINES, g_rgbHeightMapScales);
 
   // Render the OpenGL.
   glutInit(&argc, argv);
@@ -410,7 +422,8 @@ int main(int argc, char** argv) {
   free_Array(g_rgbHeightMapScales);
   free_Array(g_sphereVertices);
   free_Array(g_sphereNormals);
-  free_Array(g_sphereHeightMaps);
+  free_Array(g_sphereNormalLines);
+  free_Array(g_sphereHeightMapNormalLines);
   printf("\nScript complete.\n");
   return 0;
 }

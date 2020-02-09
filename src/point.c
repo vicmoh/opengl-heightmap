@@ -15,8 +15,13 @@ void free_Point(Point* this) {
   free(this);
 }
 
+double calcPointHeightBasedOnRGB(double rgbVal) {
+  double toBeReturn = rgbVal / 512;
+  return toBeReturn;
+}
+
 Array* getSphereVertices(double r, double lats, double longs,
-                         enum SphereType type) {
+                         enum SphereType type, Array* rgb) {
   // Determine to show debugger.
   const bool SHOW_PRINT = false;
   String debug = $("drawSphereVertices():");
@@ -24,26 +29,33 @@ Array* getSphereVertices(double r, double lats, double longs,
 
   // Initialize and array of points.
   Array* points = new_Array(free_Point);
+  int nextRGB = -1;
 
   // Loop through to create the vertices of the sphere.
   // Calculate and added to the array of points.
   for (int i = 0; i <= lats; i++) {
-    /// Determine if the normals is showed for the height map.
-    const double stepSize = (type == HEIGHT_MAPS) ? 1.1 : 1;
-
-    // Calculate the size of the circle.
-    double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
-    double z0 = sin(lat0) * stepSize;
-    double zr0 = cos(lat0) * stepSize;
-
-    // Calculate the other half
-    double lat1 = M_PI * (-0.5 + (double)i / lats);
-    double z1 = sin(lat1) * stepSize;
-    double zr1 = cos(lat1) * stepSize;
-
     // Calculate and add the points to the array
     // depending the type of sphere created.
     for (int j = 0; j <= longs; j++) {
+      /// Determine if the normals is showed for the height map.
+      nextRGB++;
+      double stepSize = 1;
+      if (type == NORMAL_LINES) stepSize = 1.1;
+      if (type == NORMAL_LINES && rgb != null)
+        stepSize =
+            calcPointHeightBasedOnRGB(*(double*)Array_get(rgb, nextRGB)) + 1.1;
+
+      // Calculate the size of the circle.
+      double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
+      double z0 = sin(lat0) * stepSize;
+      double zr0 = cos(lat0) * stepSize;
+
+      // Calculate the other half
+      double lat1 = M_PI * (-0.5 + (double)i / lats);
+      double z1 = sin(lat1) * stepSize;
+      double zr1 = cos(lat1) * stepSize;
+
+      // Calculate the x, y value
       double lng = 2 * M_PI * (double)(j - 1) / longs;
       double x = cos(lng);
       double y = sin(lng);
@@ -52,10 +64,8 @@ Array* getSphereVertices(double r, double lats, double longs,
       if (type == VERTICES) {
         Array_add(points, new_Point(r * x * zr0, r * y * zr0, r * z0));
         Array_add(points, new_Point(r * x * zr1, r * y * zr1, r * z1));
-      } else if (type == NORMALS) {
-        Array_add(points, new_Point((x * zr0), (y * zr0), z0));
-        Array_add(points, new_Point((x * zr1), (y * zr1), z1));
-      } else if (type == HEIGHT_MAPS) {
+      } else if (type == NORMALS || type == NORMAL_LINES ||
+                 type == HEIGHT_MAP) {
         Array_add(points, new_Point((x * zr0), (y * zr0), z0));
         Array_add(points, new_Point((x * zr1), (y * zr1), z1));
       }
@@ -77,12 +87,12 @@ Array* getRGBFromFile(String pgmFile) {
   FileReader* fr = new_FileReader(pgmFile);
 
   // Check if file exist.
-  if (fr == NULL) {
+  if (fr == null) {
     printf("Could not find the file. Please re-enter the FILE argument.\n");
     free_FileReader(fr);
     free_Array(listOfRGB);
     exit(0);
-    return NULL;
+    return null;
   }
 
   // Loop through each line of the file.
