@@ -7,7 +7,7 @@ INCLUDES = -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platfor
 TARGET = -mmacosx-version-min=10.8
 
 # Vic's library
-LIB_INC = -I./lib/include/
+LIB_INC = -I./lib/include/ -I./include
 LIB_FILE = ./lib/shared/*.so
 
 # Variable for git comment.

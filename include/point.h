@@ -3,12 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "array_map.h"
 
 typedef struct {
   long double x, y, z;
 } Point;
 
 Point* new_Point(long double x, long double y, long double z);
-Point* getSphereVertices();
+Array* getSphereVertices(double r, double lats, double longs);
 
 #endif
