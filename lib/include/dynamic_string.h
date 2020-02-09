@@ -43,8 +43,8 @@
 #define free(val)             \
   if (val != NULL) free(val); \
   val = NULL
-#define numberToString(...) __numberToString(__ARGS(__VA_ARGS__), __VA_ARGS__)
-#define _(...) __numberToString(__ARGS(__VA_ARGS__), __VA_ARGS__)
+#define numberToString(...) __numberToString(__ARGS(__VA_ARGS__), (double) __VA_ARGS__)
+#define _(...) __numberToString(__ARGS(__VA_ARGS__), (double) __VA_ARGS__)
 
 // Credit for lambda https://blog.noctua-software.com/c-lambda.html
 #define LAMBDA(varfunction) ({ varfunction function; })
@@ -99,8 +99,9 @@ char* __newString(char* val, ...);
 void __multipleFree(void* val, ...);
 
 /**
- * Convert number to allocated string.
- * @param firstArg is the long double of the number to be converted.
+ * Convert number to allocated string. Call using
+ * numberToString() function or _() instead.
+ * @param numOfArgs is the number of arg being passed.
  * @param secondArg is the int of the decimal places.
  * @return allocated string, must be free.
  */
