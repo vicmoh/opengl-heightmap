@@ -24,13 +24,15 @@ Array* getSphereVertices(double r, double lats, double longs,
   Array* points = new_Array(free_Point);
 
   for (int i = 0; i <= lats; i++) {
+    const double stepSize = (type == HEIGHT_MAPS) ? 1.1 : 1;
+
     double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
-    double z0 = sin(lat0);
-    double zr0 = cos(lat0);
+    double z0 = sin(lat0) * stepSize;
+    double zr0 = cos(lat0) * stepSize;
 
     double lat1 = M_PI * (-0.5 + (double)i / lats);
-    double z1 = sin(lat1);
-    double zr1 = cos(lat1);
+    double z1 = sin(lat1) * stepSize;
+    double zr1 = cos(lat1) * stepSize;
 
     for (int j = 0; j <= longs; j++) {
       double lng = 2 * M_PI * (double)(j - 1) / longs;
