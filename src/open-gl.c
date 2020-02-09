@@ -119,13 +119,13 @@ void drawSphereHeightMaps() {
   glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
   for (int x = 0; x <= g_sphereNumOfPoly; x++) {
     for (int y = 0; y <= g_sphereNumOfPoly; y++) {
-      Point* hmp = Array_get(g_sphereNormals, next);
+      Point* hmp = Array_get(g_sphereHeightMaps, next);
       glVertex3f(0, 0, 0);
       glVertex3f(hmp->x, hmp->y, hmp->z);
       if (SHOW_PRINT) printf("%s vertex: %s\n", debug, hmp->toString);
       next++;
 
-      Point* hmp2 = Array_get(g_sphereNormals, next);
+      Point* hmp2 = Array_get(g_sphereHeightMaps, next);
       glVertex3f(0, 0, 0);
       glVertex3f(hmp2->x, hmp2->y, hmp2->z);
       if (SHOW_PRINT) printf("%s vertex: %s\n", debug, hmp2->toString);
