@@ -20,10 +20,6 @@
 #include <OpenGL/glu.h>
 
 typedef struct {
-  long double x, y, z;
-} Point;
-
-typedef struct {
   bool lineDrawing, lighting, drawNormals, heightmap, drawDots, smoothShade;
 } ShowAttribute;
 

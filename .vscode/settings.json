@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "bit": "c"
+        "bit": "c",
+        "point.h": "c"
     },
     "cSpell.ignoreWords": [
         "g",
