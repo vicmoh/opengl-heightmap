@@ -19,7 +19,7 @@ Array* getSphereVertices(double r, double lats, double longs,
                          enum SphereType type) {
   // Determine to show debugger.
   const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphereVertices():";
+  String debug = $("drawSphereVertices():");
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 
   // Initialize and array of points.
@@ -63,6 +63,7 @@ Array* getSphereVertices(double r, double lats, double longs,
   }
 
   // Return the points.
+  dispose(debug);
   return points;
 }
 
@@ -91,8 +92,8 @@ Array* getRGBFromFile(String pgmFile) {
   }
 
   // Print the list of RGB of the array from the file.
-  for_in(next, listOfRGB)
-      printf("%s RGB[%d]: %f\n", debug, next, *(double*)Array_get(listOfRGB, next));
+  for_in(next, listOfRGB) printf("%s RGB[%d]: %f\n", debug, next,
+                                 *(double*)Array_get(listOfRGB, next));
 
   // Free and return.
   dispose(debug);
