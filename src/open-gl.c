@@ -210,11 +210,10 @@ void display(void) {
   glPointSize(5.0);
 
   /* Your code goes here */
-  if (g_attribute.drawNormals == true)
-    drawSphere(NORMALS);
-  else if (g_attribute.heightmap)
+  if (g_attribute.drawNormals == true) {
+    drawSphere(PLANES);
     drawSphereHeightMaps();
-  else if (g_attribute.drawDots == true)
+  } else if (g_attribute.drawDots == true)
     drawSphere(VERTICES);
   else if (g_attribute.drawDots == false)
     drawSphere(PLANES);
