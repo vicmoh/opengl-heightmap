@@ -27,6 +27,8 @@ typedef struct {
   bool lineDrawing, lighting, drawNormals, heightmap, drawDots, smoothShade;
 } ShowAttribute;
 
+enum SphereType { PLANES, VERTICES };
+
 GLfloat BLUE[] = {0.0, 0.0, 1.0, 1.0};
 GLfloat RED[] = {1.0, 0.0, 0.0, 1.0};
 GLfloat DARK_RED[] = {0.3, 0.0, 0.0, 1.0};
@@ -70,15 +72,20 @@ ShowAttribute resetAttribute() {
   return new;
 }
 
-void drawSphere() {
+void drawSphere(enum SphereType type) {
   const bool SHOW_PRINT = false;
-  const char debug[] = "drawSphereVertices():";
+  const char debug[] = "drawSphere():";
   if (SHOW_PRINT) printf("%s Invoked.\n", debug);
 
   // Loop through the vertices
   int next = 0;
   for (int x = 0; x <= g_sphereNumOfPoly; x++) {
-    glBegin(GL_QUAD_STRIP);
+    if (type == PLANES)
+      glBegin(GL_QUAD_STRIP);
+    else if (type == VERTICES)
+      glBegin(GL_POINTS);
+    else
+      exit(0);
     for (int y = 0; y <= g_sphereNumOfPoly; y++) {
       Point* point1 = Array_get(g_sphereVertices, next);
       Point* norm1 = Array_get(g_sphereNormals, next);
@@ -185,8 +192,8 @@ void display(void) {
   glPointSize(5.0);
 
   /* Your code goes here */
-  if (g_attribute.drawDots == true) drawSphereNormals();
-  if (g_attribute.drawDots == false) drawSphere();
+  if (g_attribute.drawDots == true) drawSphere(VERTICES);
+  if (g_attribute.drawDots == false) drawSphere(PLANES);
 
   // Flush and pop matrix
   glPopMatrix();
