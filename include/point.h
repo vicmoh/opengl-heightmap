@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "array_map.h"
 #include "dynamic_string.h"
+#include "file_reader.h"
+#include "splitter.h"
 
 enum SphereType { PLANES, VERTICES, NORMALS, HEIGHT_MAPS };
 

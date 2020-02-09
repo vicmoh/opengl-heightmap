@@ -53,3 +53,5 @@ Array* getSphereVertices(double r, double lats, double longs,
   }
   return points;
 }
+
+Array* getRGBFromPGM(String fileName) { Array* listOfRGB = new_Array(free); }
