@@ -96,8 +96,8 @@ void drawSphere(double r, double lats, double longs, bool isSmooth,
   double pgmArray[100][100];
   int nextPGM = -1;
   // loop duh.
-  loop(x, 0, g_sphereNumOfPoly) {
-    loop(y, 0, g_sphereNumOfPoly) {
+  loop(x, 0, g_sphereNumOfPoly - 1) {
+    loop(y, 0, g_sphereNumOfPoly - 1) {
       nextPGM++;
       pgmArray[x][y] = abs((int)*((double*)Array_get(g_rgbValues, nextPGM)));
     }
@@ -110,8 +110,8 @@ void drawSphere(double r, double lats, double longs, bool isSmooth,
   double offsetU = ((maxU - minU) / longs);
   double offsetV = ((maxV - minV) / lats);
   // Loop through the latitude.
-  loop(i, 0, lats) {
-    loop(j, 0, longs) {
+  loop(i, 0, lats - 1) {
+    loop(j, 0, longs - 1) {
       double u = minU + (i * offsetU);
       double v = minV + (j * offsetV);
       double x1 = r * cos(v) * cos(u);
