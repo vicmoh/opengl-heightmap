@@ -76,20 +76,8 @@ const double g_sphereNumOfPoly = 50;
 /* -------------------------------------------------------------------------- */
 
 /**
- * Function to reset the attribute of the material.
+ * Draw the normals of the sphere.
  */
-ShowAttribute resetAttribute() {
-  ShowAttribute new = {
-      .lineDrawing = false,
-      .lighting = true,
-      .drawNormals = false,
-      .heightmap = false,
-      .drawDots = false,
-      .smoothShade = true,
-  };
-  return new;
-}
-
 void drawNormals(double x, double y, double z) {
   glBegin(GL_LINES);
   glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
@@ -99,8 +87,11 @@ void drawNormals(double x, double y, double z) {
   glEnd();
 }
 
-void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
-                      bool isHeightMap, bool isNormal, bool isVertices) {
+/**
+ * Draw the sphere
+ */
+void drawSphere(double r, double lats, double longs, bool isSmooth,
+                bool isHeightMap, bool isNormal, bool isVertices) {
   // Convert to array.
   double pgmArray[100][100];
   int nextPGM = -1;
@@ -183,86 +174,6 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
 }
 
 /**
- *  Draw sphere based of the type.
- * @param type.
- */
-void drawSphere(enum SphereType type) {
-  const bool SHOW_PRINT = false;
-  String debug = $("drawSphere():");
-  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
-
-  // Loop through the vertices.
-  int next = 0;
-  loop(x, 0, g_sphereNumOfPoly) {
-    // Initialize and draw type based on the types.
-    if (type == PLANES || type == HEIGHT_MAP)
-      glBegin(GL_QUAD_STRIP);
-    else if (type == VERTICES)
-      glBegin(GL_POINTS);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, DARK_GRAY);
-
-    // draw
-    loop(y, 0, g_sphereNumOfPoly) {
-      // Determine which to draw depending.
-      Array* vertices =
-          (type == HEIGHT_MAP) ? g_sphereHeightMap : g_sphereVertices;
-      Array* normals =
-          (type == HEIGHT_MAP) ? g_sphereHeightMapNormal : g_sphereNormals;
-
-      // Draw first vertices.
-      Point* point1 = Array_get(vertices, next);
-      Point* norm1 = Array_get(normals, next);
-      glNormal3f(norm1->x, norm1->y, norm1->z);
-      glVertex3f(point1->x, point1->y, point1->z);
-      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point1->toString);
-      next++;
-
-      // Draw the second vertices.
-      Point* point2 = Array_get(vertices, next);
-      Point* norm2 = Array_get(normals, next);
-      glNormal3f(norm2->x, norm2->y, norm2->z);
-      glVertex3f(point2->x, point2->y, point2->z);
-      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point2->toString);
-      next++;
-    }
-
-    // End drawing based on the types.
-    if (type == PLANES || type == VERTICES || type == HEIGHT_MAP) glEnd();
-  }
-  dispose(debug);
-}
-
-void drawSphereNormalLines(Array* vertices) {
-  const bool SHOW_PRINT = false;
-  String debug = $("drawSphere():");
-  if (SHOW_PRINT) printf("%s Invoked.\n", debug);
-
-  // Loop through the vertices
-  int next = 0;
-  glBegin(GL_LINES);
-  glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
-  loop(x, 0, g_sphereNumOfPoly) {
-    loop(y, 0, g_sphereNumOfPoly) {
-      // Get the normals of and draw lines.
-      Point* point1 = Array_get(vertices, next);
-      glVertex3f(0, 0, 0);
-      glVertex3f(point1->x, point1->y, point1->z);
-      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point1->toString);
-      next++;
-
-      // Get the normals of and draw lines.
-      Point* point2 = Array_get(vertices, next);
-      glVertex3f(0, 0, 0);
-      glVertex3f(point2->x, point2->y, point2->z);
-      if (SHOW_PRINT) printf("%s vertex: %s\n", debug, point2->toString);
-      next++;
-    }
-  }
-  glEnd();
-  dispose(debug);
-}
-
-/**
  * Initialize material property and light source.
  */
 void init(void) {
@@ -334,36 +245,34 @@ void display(void) {
   glPointSize(5.0);
 
   if (g_optionSelected == 1)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     false, false, false, false);
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
+               false, false, false);
   else if (g_optionSelected == 2)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-                     false, false, false);
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
+               false, false, false);
   else if (g_optionSelected == 3)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-                     false, false, false);
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
+               false, false, false);
   else if (g_optionSelected == 4)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     false, false, false, true);
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
+               false, false, true);
   else if (g_optionSelected == 5)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     false, false, false, false);
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
+               false, false, false);
   else if (g_optionSelected == 6) {
-    drawSphere(PLANES);
   } else if (g_optionSelected == 7) {
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-                     true, false, false);
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true, true,
+               false, false);
   }
 
-  if (g_attribute.drawNormals) {
-    if (g_attribute.heightmap)
-      drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                       true, true, true, (g_attribute.drawDots) ? true : false);
-    else
-      drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                       true, false, true,
-                       (g_attribute.drawDots) ? true : false);
-  }
+  if (g_attribute.heightmap)
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true, true,
+               (g_attribute.drawNormals) ? true : false,
+               (g_attribute.drawDots) ? true : false);
+  else
+    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
+               false, (g_attribute.drawNormals) ? true : false,
+               (g_attribute.drawDots) ? true : false);
 
   // Flush and pop matrix.
   glPopMatrix();
@@ -402,7 +311,6 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '1':  // Draw polygons as outlines.
       g_optionSelected = 1;
-      // g_attribute = resetAttribute();
       g_attribute.lineDrawing = true;
       g_attribute.lighting = false;  // added
       g_attribute.drawDots = false;
@@ -412,7 +320,6 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '2':  // Draw polygons as filled but not shaded (ambient only).
       g_optionSelected = 2;
-      // g_attribute = resetAttribute();
       g_attribute.lineDrawing = false;
       g_attribute.smoothShade = false;
       g_attribute.lighting = false;
@@ -422,7 +329,6 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '3':  // Diffuse and specular lighting, smooth shadows.
       g_optionSelected = 3;
-      // g_attribute = resetAttribute();
       g_attribute.lineDrawing = false;
       g_attribute.lighting = true;
       g_attribute.smoothShade = false;
@@ -432,11 +338,8 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '4':  // Draw vertices only, no polygons when == 1.
       g_optionSelected = 4;
-      // g_attribute = resetAttribute();
       if (g_attribute.drawDots == false) {
         g_attribute.drawDots = true;
-        // g_attribute.lighting = false;
-        // g_attribute.smoothShade = false;
       } else
         g_attribute.drawDots = false;
       init();
@@ -445,7 +348,6 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '5':  // Flat shade, use only one normal.
       g_optionSelected = 5;
-      // g_attribute = resetAttribute();
       if (g_attribute.smoothShade == false) {
         g_attribute.smoothShade = true;
       } else
@@ -457,7 +359,6 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '6':  // Draw normals to points when == 1.
       g_optionSelected = 6;
-      // g_attribute = resetAttribute();
       if (g_attribute.drawNormals == false)
         g_attribute.drawNormals = true;
       else
@@ -469,7 +370,6 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '7':  // Add height map to sphere when == 1.
       g_optionSelected = 7;
-      // g_attribute = resetAttribute();
       if (g_attribute.heightmap == false)
         g_attribute.heightmap = true;
       else
