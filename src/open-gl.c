@@ -96,10 +96,10 @@ void drawSphere(double r, double lats, double longs, bool isSmooth,
   double pgmArray[100][100];
   int nextPGM = -1;
   // loop duh.
-  loop(x, 0, g_sphereNumOfPoly - 1) {
-    loop(y, 0, g_sphereNumOfPoly - 1) {
+  loop(x, 0, g_sphereNumOfPoly ) {
+    loop(y, 0, g_sphereNumOfPoly) {
       nextPGM++;
-      pgmArray[x][y] = *((double*)Array_get(g_rgbValues, nextPGM));
+      pgmArray[x][y] = abs((int)*((double*)Array_get(g_rgbValues, nextPGM)));
     }
   }
   // Variables
@@ -297,7 +297,7 @@ void keyboardControl(unsigned char key, int x, int y) {
     case '2':  // Draw polygons as filled but not shaded (ambient only).
       g_optionSelected = 2;
       g_attribute.lineDrawing = false;
-      g_attribute.drawDots = false;
+      g_attribute.smoothShade = false;
       g_attribute.lighting = false;
       init();
       display();
