@@ -101,7 +101,7 @@ Array* getRGBFromFile(String pgmFile) {
 
   // Loop through each line of the file.
   for_in(nextLine, fr) {
-    if (nextLine < 3) continue;
+    if (nextLine < 4) continue;
     String line = FileReader_getLineAt(fr, nextLine);
 
     // Split the line string to get each rgb color

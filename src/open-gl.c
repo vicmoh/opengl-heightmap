@@ -105,10 +105,11 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
   double pgmArray[100][100];
   int nextPGM = -1;
   // loop duh.
-  loop(x, 0, 50 - 1) {
-    loop(y, 0, 50 - 1) {
+  loop(x, 0, g_sphereNumOfPoly - 1) {
+    loop(y, 0, g_sphereNumOfPoly - 1) {
       nextPGM++;
-      pgmArray[x][y] = *(double*)Array_get(g_rgbValues, nextPGM);
+      pgmArray[x][y] = *((double*)Array_get(g_rgbValues, nextPGM));
+      printf("PGM[%d][%d]: %f\n", x, y,  pgmArray[x][y]);
     }
   }
   // Variables
@@ -116,8 +117,8 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
   double maxU = 2 * M_PI;
   double minV = -M_PI / 2;
   double maxV = M_PI / 2;
-  double offsetU = ((minU - maxU) / longs);
-  double offsetV = ((minV - maxV) / lats);
+  double offsetU = ((maxU - minU) / longs);
+  double offsetV = ((maxV - minV) / lats);
   // Loop through the latitude.
   loop(i, 0, lats) {
     loop(j, 0, longs) {
@@ -494,7 +495,7 @@ void update() {
  * @param argv is list of argument values.
  */
 int main(int argc, char** argv) {
-  const bool SHOW_DEBUG = false;
+  const bool SHOW_DEBUG = true;
   printf("Running script...\n\n");
 
   // Check if argument exist.
