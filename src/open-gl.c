@@ -100,7 +100,7 @@ void drawNormals(double x, double y, double z) {
 }
 
 void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
-                      bool isHeightMap, bool isNormal) {
+                      bool isHeightMap, bool isNormal, bool isVertices) {
   // Convert to array.
   double pgmArray[100][100];
   int nextPGM = -1;
@@ -151,7 +151,11 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
         z4 *= r + pgmArray[i][j + 1] / 512.0;
       }
       // Draw the sphere.
-      glBegin(GL_QUADS);
+      if (isVertices)
+        glBegin(GL_POINTS);
+      else
+        glBegin(GL_QUADS);
+
       glMaterialfv(GL_FRONT, GL_AMBIENT, DARK_GRAY);
       // First
       glNormal3f(x1, y1, z1);
@@ -330,34 +334,35 @@ void display(void) {
   glPointSize(5.0);
 
   if (g_optionSelected == 1)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
-                     false, false);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                     false, false, false, false);
   else if (g_optionSelected == 2)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-                     false, false);
+                     false, false, false);
   else if (g_optionSelected == 3)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-                     false, false);
+                     false, false, false);
   else if (g_optionSelected == 4)
-    drawSphere(VERTICES);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                     false, false, false, true);
   else if (g_optionSelected == 5)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     false, false, false);
+                     false, false, false, false);
   else if (g_optionSelected == 6) {
     drawSphere(PLANES);
   } else if (g_optionSelected == 7) {
-    // drawSphere(HEIGHT_MAP);
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-                     true, false);
+                     true, false, false);
   }
 
   if (g_attribute.drawNormals) {
     if (g_attribute.heightmap)
       drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                       true, true, true);
+                       true, true, true, (g_attribute.drawDots) ? true : false);
     else
       drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                       true, false, true);
+                       true, false, true,
+                       (g_attribute.drawDots) ? true : false);
   }
 
   // Flush and pop matrix.
