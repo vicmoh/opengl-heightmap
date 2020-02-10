@@ -243,35 +243,12 @@ void display(void) {
   // set point size so vertices are visible.
   glPointSize(5.0);
 
-  if (g_optionSelected == 1)
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
-               false, false, false);
-  else if (g_optionSelected == 2)
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-               false, false, false);
-  else if (g_optionSelected == 3)
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-               false, false, false);
-  else if (g_optionSelected == 4)
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
-               false, false, true);
-  else if (g_optionSelected == 5)
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
-               false, false, false);
-  else if (g_optionSelected == 6) {
-  } else if (g_optionSelected == 7) {
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true, true,
-               false, false);
-  }
-
-  if (g_attribute.heightmap)
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true, true,
-               (g_attribute.drawNormals) ? true : false,
-               (g_attribute.drawDots) ? true : false);
-  else
-    drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
-               false, (g_attribute.drawNormals) ? true : false,
-               (g_attribute.drawDots) ? true : false);
+  // Draw the sphere.
+  drawSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+             (g_attribute.smoothShade) ? true : false,
+             (g_attribute.heightmap) ? true : false,
+             (g_attribute.drawNormals) ? true : false,
+             (g_attribute.drawDots) ? true : false);
 
   // Flush and pop matrix.
   glPopMatrix();
@@ -320,7 +297,7 @@ void keyboardControl(unsigned char key, int x, int y) {
     case '2':  // Draw polygons as filled but not shaded (ambient only).
       g_optionSelected = 2;
       g_attribute.lineDrawing = false;
-      g_attribute.smoothShade = false;
+      g_attribute.drawDots = false;
       g_attribute.lighting = false;
       init();
       display();
@@ -330,7 +307,7 @@ void keyboardControl(unsigned char key, int x, int y) {
       g_optionSelected = 3;
       g_attribute.lineDrawing = false;
       g_attribute.lighting = true;
-      g_attribute.smoothShade = false;
+      g_attribute.drawDots = false;
       init();
       display();
       break;
