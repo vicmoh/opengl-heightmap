@@ -109,7 +109,7 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
     loop(y, 0, g_sphereNumOfPoly - 1) {
       nextPGM++;
       pgmArray[x][y] = *((double*)Array_get(g_rgbValues, nextPGM));
-      printf("PGM[%d][%d]: %f\n", x, y,  pgmArray[x][y]);
+      printf("PGM[%d][%d]: %f\n", x, y, pgmArray[x][y]);
     }
   }
   // Variables
@@ -170,9 +170,9 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
       // Draw normal if needed.
       if (isNormal) {
         drawNormals(x1, y1, z1);
-        drawNormals(x2, y2, z2);
-        drawNormals(x3, y3, z3);
-        drawNormals(x4, y4, z4);
+        if (isSmooth) drawNormals(x2, y2, z2);
+        if (isSmooth) drawNormals(x3, y3, z3);
+        if (isSmooth) drawNormals(x4, y4, z4);
       }
     }
   }
@@ -330,7 +330,8 @@ void display(void) {
   glPointSize(5.0);
 
   if (g_optionSelected == 1)
-    drawSphere(PLANES);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
+                     false, false);;
   else if (g_optionSelected == 2)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
                      false, false);
@@ -495,7 +496,7 @@ void update() {
  * @param argv is list of argument values.
  */
 int main(int argc, char** argv) {
-  const bool SHOW_DEBUG = true;
+  const bool SHOW_DEBUG = false;
   printf("Running script...\n\n");
 
   // Check if argument exist.
