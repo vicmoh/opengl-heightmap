@@ -100,7 +100,6 @@ void drawSphere(double r, double lats, double longs, bool isSmooth,
     loop(y, 0, g_sphereNumOfPoly - 1) {
       nextPGM++;
       pgmArray[x][y] = *((double*)Array_get(g_rgbValues, nextPGM));
-      printf("PGM[%d][%d]: %f\n", x, y, pgmArray[x][y]);
     }
   }
   // Variables
