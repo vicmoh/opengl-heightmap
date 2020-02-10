@@ -95,8 +95,8 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth) {
   double maxU = 2 * M_PI;
   double minV = -1 * M_PI / 2;
   double maxV = M_PI / 2;
-  double offsetU = (minU + maxU) / 2;
-  double offsetV = (minV + maxV) / 2;
+  double offsetU = (minU - maxU) / longs;
+  double offsetV = (minV - maxV) / lats;
   // Loop through the latitude.
   loop(i, 0, lats) {
     loop(j, 0, longs) {
@@ -263,10 +263,7 @@ void init(void) {
 void display(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Draw surfaces as smooth shaded.
-  if (g_attribute.smoothShade == true)
-    glShadeModel(GL_SMOOTH);
-  else
-    glShadeModel(GL_NORMAL);
+  glShadeModel(GL_SMOOTH);
   // Draw polygons as either solid or outlines.
   if (g_attribute.lineDrawing == true)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -290,19 +287,27 @@ void display(void) {
   if (g_optionSelected == 1)
     drawSphere(PLANES);
   else if (g_optionSelected == 2)
-    drawSphere(PLANES);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                     true);
   else if (g_optionSelected == 3)
-    drawSphere(PLANES);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                     true);
   else if (g_optionSelected == 4)
     drawSphere(VERTICES);
   else if (g_optionSelected == 5)
-    drawSphere(PLANES);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                     false);
   else if (g_optionSelected == 6) {
     drawSphere(PLANES);
-    drawSphereNormalLines(g_sphereNormalLines);
   } else if (g_optionSelected == 7) {
     drawSphere(HEIGHT_MAP);
-    drawSphereNormalLines(g_sphereHeightMapNormalLines);
+  }
+
+  if (g_attribute.drawNormals) {
+    if (g_attribute.heightmap)
+      drawSphereNormalLines(g_sphereHeightMapNormalLines);
+    else
+      drawSphereNormalLines(g_sphereNormalLines);
   }
 
   // Flush and pop matrix.
@@ -342,15 +347,17 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '1':  // Draw polygons as outlines.
       g_optionSelected = 1;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       g_attribute.lineDrawing = true;
+      g_attribute.lighting = false;  // added
+      g_attribute.drawDots = false;
       init();
       display();
       break;
 
     case '2':  // Draw polygons as filled but not shaded (ambient only).
       g_optionSelected = 2;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       g_attribute.lineDrawing = false;
       g_attribute.smoothShade = false;
       g_attribute.lighting = false;
@@ -360,21 +367,21 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '3':  // Diffuse and specular lighting, smooth shadows.
       g_optionSelected = 3;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       g_attribute.lineDrawing = false;
       g_attribute.lighting = true;
-      g_attribute.smoothShade = true;
+      g_attribute.smoothShade = false;
       init();
       display();
       break;
 
     case '4':  // Draw vertices only, no polygons when == 1.
       g_optionSelected = 4;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       if (g_attribute.drawDots == false) {
         g_attribute.drawDots = true;
-        g_attribute.lighting = false;
-        g_attribute.smoothShade = false;
+        // g_attribute.lighting = false;
+        // g_attribute.smoothShade = false;
       } else
         g_attribute.drawDots = false;
       init();
@@ -383,33 +390,36 @@ void keyboardControl(unsigned char key, int x, int y) {
 
     case '5':  // Flat shade, use only one normal.
       g_optionSelected = 5;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       if (g_attribute.smoothShade == false) {
         g_attribute.smoothShade = true;
       } else
         g_attribute.smoothShade = false;
+      g_attribute.drawDots = false;
       init();
       display();
       break;
 
     case '6':  // Draw normals to points when == 1.
       g_optionSelected = 6;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       if (g_attribute.drawNormals == false)
         g_attribute.drawNormals = true;
       else
         g_attribute.drawNormals = false;
+      g_attribute.drawDots = false;
       init();
       display();
       break;
 
     case '7':  // Add height map to sphere when == 1.
       g_optionSelected = 7;
-      g_attribute = resetAttribute();
+      // g_attribute = resetAttribute();
       if (g_attribute.heightmap == false)
         g_attribute.heightmap = true;
       else
         g_attribute.heightmap = false;
+      g_attribute.drawDots = false;
       init();
       display();
       break;
