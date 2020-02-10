@@ -151,6 +151,7 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
       }
       // Draw the sphere.
       glBegin(GL_QUADS);
+      glMaterialfv(GL_FRONT, GL_AMBIENT, DARK_GRAY);
       // First
       glNormal3f(x1, y1, z1);
       glVertex3f(x1, y1, z1);
