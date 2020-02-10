@@ -90,13 +90,34 @@ ShowAttribute resetAttribute() {
   return new;
 }
 
-void drawShadedSphere(double r, double lats, double longs, bool isSmooth) {
+void drawNormals(double x, double y, double z) {
+  glBegin(GL_LINES);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, GREEN);
+  double lineLength = 1.1;
+  glVertex3f(x, y, z);
+  glVertex3f(x * lineLength, y * lineLength, z * lineLength);
+  glEnd();
+}
+
+void drawShadedSphere(double r, double lats, double longs, bool isSmooth,
+                      bool isHeightMap, bool isNormal) {
+  // Convert to array.
+  double pgmArray[100][100];
+  int nextPGM = -1;
+  // loop duh.
+  loop(x, 0, 50 - 1) {
+    loop(y, 0, 50 - 1) {
+      nextPGM++;
+      pgmArray[x][y] = *(double*)Array_get(g_rgbValues, nextPGM);
+    }
+  }
+  // Variables
   double minU = 0;
   double maxU = 2 * M_PI;
-  double minV = -1 * M_PI / 2;
+  double minV = -M_PI / 2;
   double maxV = M_PI / 2;
-  double offsetU = (minU - maxU) / longs;
-  double offsetV = (minV - maxV) / lats;
+  double offsetU = ((minU - maxU) / longs);
+  double offsetV = ((minV - maxV) / lats);
   // Loop through the latitude.
   loop(i, 0, lats) {
     loop(j, 0, longs) {
@@ -114,6 +135,20 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth) {
       double x4 = r * cos(v + offsetV) * cos(u);
       double y4 = r * cos(v + offsetV) * sin(u);
       double z4 = r * sin(v + offsetV);
+      if (isHeightMap) {
+        x1 *= r + pgmArray[i][j] / 512.0;
+        y1 *= r + pgmArray[i][j] / 512.0;
+        z1 *= r + pgmArray[i][j] / 512.0;
+        x2 *= r + pgmArray[i + 1][j] / 512.0;
+        y2 *= r + pgmArray[i + 1][j] / 512.0;
+        z2 *= r + pgmArray[i + 1][j] / 512.0;
+        x3 *= r + pgmArray[i + 1][j + 1] / 512.0;
+        y3 *= r + pgmArray[i + 1][j + 1] / 512.0;
+        z3 *= r + pgmArray[i + 1][j + 1] / 512.0;
+        x4 *= r + pgmArray[i][j + 1] / 512.0;
+        y4 *= r + pgmArray[i][j + 1] / 512.0;
+        z4 *= r + pgmArray[i][j + 1] / 512.0;
+      }
       // Draw the sphere.
       glBegin(GL_QUADS);
       // First
@@ -129,6 +164,14 @@ void drawShadedSphere(double r, double lats, double longs, bool isSmooth) {
       if (isSmooth) glNormal3f(x4, y4, z4);
       glVertex3f(x4, y4, z4);
       glEnd();
+
+      // Draw normal if needed.
+      if (isNormal) {
+        drawNormals(x1, y1, z1);
+        drawNormals(x2, y2, z2);
+        drawNormals(x3, y3, z3);
+        drawNormals(x4, y4, z4);
+      }
     }
   }
 }
@@ -287,27 +330,31 @@ void display(void) {
   if (g_optionSelected == 1)
     drawSphere(PLANES);
   else if (g_optionSelected == 2)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     true);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
+                     false, false);
   else if (g_optionSelected == 3)
-    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     true);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
+                     false, false);
   else if (g_optionSelected == 4)
     drawSphere(VERTICES);
   else if (g_optionSelected == 5)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
-                     false);
+                     false, false, false);
   else if (g_optionSelected == 6) {
     drawSphere(PLANES);
   } else if (g_optionSelected == 7) {
-    drawSphere(HEIGHT_MAP);
+    // drawSphere(HEIGHT_MAP);
+    drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
+                     true, false);
   }
 
   if (g_attribute.drawNormals) {
     if (g_attribute.heightmap)
-      drawSphereNormalLines(g_sphereHeightMapNormalLines);
+      drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                       true, true, true);
     else
-      drawSphereNormalLines(g_sphereNormalLines);
+      drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly,
+                       true, false, true);
   }
 
   // Flush and pop matrix.
