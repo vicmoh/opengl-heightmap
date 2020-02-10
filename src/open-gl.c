@@ -331,7 +331,7 @@ void display(void) {
 
   if (g_optionSelected == 1)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, false,
-                     false, false);;
+                     false, false);
   else if (g_optionSelected == 2)
     drawShadedSphere(g_sphereRadius, g_sphereNumOfPoly, g_sphereNumOfPoly, true,
                      false, false);
