@@ -87,6 +87,49 @@ ShowAttribute resetAttribute() {
   return new;
 }
 
+void drawShadedSphere(double r, double lats, double longs, bool isSmooth) {
+  double minU = 0;
+  double maxU = 2 * M_PI;
+  double minV = -1 * M_PI / 2;
+  double maxV = M_PI / 2;
+  double offsetU = (minU + maxU) / 2;
+  double offsetV = (minV + maxV) / 2;
+  // Loop through the latitude.
+  loop(i, 0, lats) {
+    loop(j, 0, longs) {
+      double u = minU + (i * offsetU);
+      double v = minV + (j * offsetV);
+      double x1 = r * cos(v) * cos(u);
+      double y1 = r * cos(v) * sin(u);
+      double z1 = r * sin(v);
+      double x2 = r * cos(v) * cos(u + offsetU);
+      double y2 = r * cos(v) * sin(u + offsetU);
+      double z2 = r * sin(v);
+      double x3 = r * cos(v + offsetV) * cos(u + offsetU);
+      double y3 = r * cos(v + offsetV) * sin(u + offsetU);
+      double z3 = r * sin(v + offsetV);
+      double x4 = r * cos(v + offsetV) * cos(u);
+      double y4 = r * cos(v + offsetV) * sin(u);
+      double z4 = r * sin(v + offsetV);
+      // Draw the sphere.
+      glBegin(GL_QUADS);
+      // First
+      glNormal3f(x1, y1, z1);
+      glVertex3f(x1, y1, z1);
+      // Second
+      if (isSmooth) glNormal3f(x2, y2, z2);
+      glVertex3f(x2, y2, z2);
+      // Third
+      if (isSmooth) glNormal3f(x3, y3, z3);
+      glVertex3f(x3, y3, z3);
+      // Fourth
+      if (isSmooth) glNormal3f(x4, y4, z4);
+      glVertex3f(x4, y4, z4);
+      glEnd();
+    }
+  }
+}
+
 /**
  *  Draw sphere based of the type.
  * @param type.
@@ -218,11 +261,10 @@ void display(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Draw surfaces as smooth shaded.
-  // Do not change this to GL_FLAT, use normals for flat shading.
   if (g_attribute.smoothShade == true)
     glShadeModel(GL_SMOOTH);
   else
-    glShadeModel(GL_FLAT);
+    glShadeModel(GL_NORMAL);
 
   // Draw polygons as either solid or outlines.
   if (g_attribute.lineDrawing == true)

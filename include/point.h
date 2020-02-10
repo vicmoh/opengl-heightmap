@@ -1,5 +1,6 @@
 #ifndef POINT_H
 #define POINT_H
+#define GL_NORMAL GL_FLAT
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +37,7 @@ void free_Point(Point* this);
  * Calculate the height map based on the RGB
  * value.
  * @param rgbVal of the to be converted.
- * @return the new converted value 
+ * @return the new converted value
  */
 double calcPointHeightBasedOnRGB(double rgbVal);
 
