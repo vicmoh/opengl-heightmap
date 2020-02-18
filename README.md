@@ -11,7 +11,7 @@
 It will run the the program with the `PGM` that contains RGB
 value for the height map.
 * `FILE` must contain an argument. If no argument is passed
-for the PGM, it will may segfault and does not compile.
+for the PGM, it may segfault and does not compile.
 
 ### Material changes
 
