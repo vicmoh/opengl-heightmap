@@ -13,7 +13,7 @@ value for the height map.
 * `FILE` must contain an argument. If no argument is passed
 for the PGM, it may segfault and does not compile.
 
-### Material changes
+## Material changes
 
 If you want to change the material of the object. 
 Press the number key from 1 to 5:
